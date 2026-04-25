@@ -3,7 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Biba Boutique · Offerta del Giorno</title>
+<title>Biba Boutique · 2+1 Gratis · Fontana di Trevi</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%230f0b05'/><text x='16' y='23' text-anchor='middle' font-family='Georgia,serif' font-size='22' font-weight='700' fill='%23c9a96e'>B</text></svg>">
+<meta name="description" content="Accessori Made in Italy a Roma. Compra 2 e il terzo è GRATIS. Via delle Muratte 88, vicino alla Fontana di Trevi.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://biba-boutique.onrender.com">
+<meta property="og:title" content="Biba Boutique · 2+1 Gratis · Fontana di Trevi">
+<meta property="og:description" content="Accessori Made in Italy a Roma. Compra 2 accessori e il terzo è GRATIS. Via delle Muratte 88, vicino alla Fontana di Trevi.">
+<meta name="twitter:card" content="summary">
 <!-- Font asincrono: pagina visibile subito, font si carica in background -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -380,9 +387,112 @@ body {
 
 [dir="rtl"] { text-align: right; }
 [dir="rtl"] .products-row { flex-direction: row-reverse; }
+
+/* ═══════════════════════════════
+   SPLASH SCREEN
+═══════════════════════════════ */
+#splash {
+  position: fixed; inset: 0; z-index: 9999;
+  background: var(--dark);
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column;
+  transition: opacity 0.7s ease;
+}
+#splash.fade-out { opacity: 0; pointer-events: none; }
+.splash-logo {
+  font-family: var(--serif);
+  font-size: clamp(4rem, 18vw, 6rem);
+  font-weight: 300; color: var(--gold);
+  letter-spacing: 0.35em;
+  text-shadow: 0 0 50px rgba(201,169,110,0.2);
+  animation: fadeDown 1s ease both;
+}
+.splash-sub {
+  font-size: 0.68rem; letter-spacing: 0.55em;
+  color: rgba(201,169,110,0.7); text-transform: uppercase;
+  margin-top: 0.3rem;
+  animation: fadeDown 1s ease 0.2s both;
+}
+.splash-dots { margin-top: 2.8rem; display: flex; gap: 0.55rem; }
+.splash-dots span {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: rgba(201,169,110,0.25);
+  animation: dotPulse 1.4s ease-in-out infinite;
+}
+.splash-dots span:nth-child(2) { animation-delay: 0.22s; }
+.splash-dots span:nth-child(3) { animation-delay: 0.44s; }
+@keyframes dotPulse {
+  0%,80%,100% { background: rgba(201,169,110,0.2); transform: scale(0.8); }
+  40%          { background: var(--gold); transform: scale(1.25); }
+}
+
+/* ═══════════════════════════════
+   SHOW-IN-STORE OVERLAY
+═══════════════════════════════ */
+.show-overlay {
+  position: fixed; inset: 0; z-index: 1000;
+  background: var(--dark);
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column;
+}
+.show-overlay.hidden { display: none !important; }
+.show-promo {
+  font-family: var(--serif);
+  font-size: clamp(5rem, 22vw, 11rem);
+  font-weight: 700; color: var(--gold);
+  line-height: 1; text-align: center;
+  text-shadow: 0 0 80px rgba(201,169,110,0.3);
+  letter-spacing: 0.05em;
+}
+.show-promo .show-free { color: var(--gold-light); display: block; font-size: 0.65em; }
+.show-brand {
+  font-family: var(--sans); font-size: 0.7rem;
+  letter-spacing: 0.4em; color: rgba(201,169,110,0.5);
+  text-transform: uppercase; margin-top: 2rem;
+}
+.show-close {
+  position: fixed; top: 1.2rem; right: 1.2rem;
+  background: none; border: 1px solid rgba(201,169,110,0.35);
+  color: var(--gold); font-size: 1.1rem;
+  width: 2.4rem; height: 2.4rem;
+  border-radius: 50%; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s;
+}
+.show-close:hover { background: var(--gold-dim); }
+.show-btn {
+  background: rgba(201,169,110,0.07);
+  border: 1px solid rgba(201,169,110,0.28);
+  color: rgba(201,169,110,0.8);
+  padding: 0.45rem 1rem; border-radius: 4px;
+  cursor: pointer; font-size: 0.68rem;
+  letter-spacing: 0.15em; font-family: var(--sans);
+  text-transform: uppercase; transition: background 0.2s, color 0.2s;
+}
+.show-btn:hover { background: rgba(201,169,110,0.15); color: var(--gold); }
+
+/* address link */
+.store-address-link {
+  color: inherit; text-decoration: none;
+  border-bottom: 1px solid rgba(201,169,110,0.2);
+  transition: border-color 0.2s;
+}
+.store-address-link:hover { border-color: var(--gold); }
 </style>
 </head>
 <body>
+
+<div id="splash">
+  <div class="splash-logo">BIBA</div>
+  <div class="splash-sub">B o u t i q u e</div>
+  <div class="splash-dots"><span></span><span></span><span></span></div>
+</div>
+
+<div id="show-overlay" class="show-overlay hidden">
+  <div class="show-promo">2 + 1<span class="show-free">GRATIS</span></div>
+  <div class="show-brand">Biba Boutique · Made in Italy</div>
+  <button class="show-close" onclick="closeShowMode()">✕</button>
+</div>
 
 <div id="home" class="screen">
   <div class="hero-logo">
@@ -416,7 +526,8 @@ body {
   </div>
   <footer class="store-footer">
     <span class="pin-icon">📍</span>
-    <div class="store-address">Via delle Muratte 88 · Roma · Fontana di Trevi</div>
+    <a href="https://maps.google.com/?q=Via+delle+Muratte+88,+Roma" target="_blank" rel="noopener" class="store-address store-address-link">Via delle Muratte 88 · Roma · Fontana di Trevi</a>
+    <button class="show-btn" onclick="openShowMode()">◻ Mostra in negozio</button>
   </footer>
 </div>
 
@@ -542,6 +653,54 @@ document.getElementById('back-btn').onclick = function() {
 };
 document.getElementById('prev-btn').onclick = prevSlide;
 document.getElementById('next-btn').onclick = nextSlide;
+
+// ── SPLASH SCREEN ──
+(function() {
+  var splash = document.getElementById('splash');
+  var hidden = false;
+  function hideSplash() {
+    if (hidden) return; hidden = true;
+    splash.classList.add('fade-out');
+    setTimeout(function() { splash.remove(); }, 720);
+  }
+  var minDone = false, loadDone = false;
+  function tryHide() { if (minDone && loadDone) hideSplash(); }
+  setTimeout(function() { minDone = true; tryHide(); }, 900);
+  if (document.readyState === 'complete') { loadDone = true; tryHide(); }
+  else window.addEventListener('load', function() { loadDone = true; tryHide(); });
+})();
+
+// ── AUTO-DETECT LINGUA ──
+(function() {
+  var lang = (navigator.language || navigator.userLanguage || 'it').split('-')[0].toLowerCase();
+  if (!LANGS[lang]) lang = 'it';
+  var btns = document.querySelectorAll('.lang-btn');
+  var keys = Object.keys(LANGS);
+  var idx = keys.indexOf(lang);
+  if (idx >= 0 && btns[idx]) {
+    btns[idx].style.borderColor = 'var(--gold)';
+    btns[idx].style.color = 'var(--gold-light)';
+  }
+  // Apre la lingua dopo che la splash è scomparsa
+  setTimeout(function() { openLang(lang); }, 1100);
+})();
+
+// ── SHOW IN STORE (FULLSCREEN) ──
+function openShowMode() {
+  document.getElementById('show-overlay').classList.remove('hidden');
+  var el = document.documentElement;
+  if (el.requestFullscreen) el.requestFullscreen();
+  else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+}
+function closeShowMode() {
+  document.getElementById('show-overlay').classList.add('hidden');
+  if (document.exitFullscreen) document.exitFullscreen();
+  else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+}
 </script>
+
+<!-- ── ANALYTICS (GoatCounter — gratuito, no cookie) ──
+     Crea account su goatcounter.com e sostituisci TUOSITO con il tuo codice -->
+<script data-goatcounter="https://biba-boutique.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>
