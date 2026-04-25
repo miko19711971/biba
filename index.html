@@ -670,7 +670,7 @@ document.getElementById('next-btn').onclick = nextSlide;
   else window.addEventListener('load', function() { loadDone = true; tryHide(); });
 })();
 
-// ── AUTO-DETECT LINGUA ──
+// ── AUTO-DETECT LINGUA ── evidenzia solo, non apre automaticamente
 (function() {
   var lang = (navigator.language || navigator.userLanguage || 'it').split('-')[0].toLowerCase();
   if (!LANGS[lang]) lang = 'it';
@@ -680,9 +680,8 @@ document.getElementById('next-btn').onclick = nextSlide;
   if (idx >= 0 && btns[idx]) {
     btns[idx].style.borderColor = 'var(--gold)';
     btns[idx].style.color = 'var(--gold-light)';
+    btns[idx].style.background = 'rgba(201,169,110,0.12)';
   }
-  // Apre la lingua dopo che la splash è scomparsa
-  setTimeout(function() { openLang(lang); }, 1100);
 })();
 
 // ── SHOW IN STORE (FULLSCREEN) ──
