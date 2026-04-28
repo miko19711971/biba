@@ -187,7 +187,7 @@ document.getElementById('slides-wrapper').addEventListener('touchend', e=>{
 
 <script>
 (function(){
-  var GAS_URL = '';
+  var GAS_URL = 'https://script.google.com/macros/s/AKfycbx0Qd3zb39OjjG4BhOjX3Ph7h85WIYMGnBm9imZn3tSej54h4YWaAlFjfeIwG400_Jx/exec';
   function logScan(data){
     try{
       fetch(GAS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
