@@ -94,75 +94,37 @@ function show(id) {
 <script>
 (function() {
   var GAS = 'https://script.google.com/macros/s/AKfycbx0Qd3zb39OjjG4BhOjX3Ph7h85WIYMGnBm9imZn3tSej54h4YWaAlFjfeIwG400_Jx/exec';
-  var PIN = '6793';
-  var COMBO = 'https://biba-boutique.onrender.com/biba_cassa.html';
 
-  // genera token
   function genToken() {
     var c = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', t = 'BIBA-';
-    for (var i=0;i<6;i++) t += c[Math.floor(Math.random()*c.length)];
+    for (var i = 0; i < 6; i++) t += c[Math.floor(Math.random() * c.length)];
     return t;
   }
 
-  // log su GAS
   function logSheet(token, tipo) {
     try {
       fetch(GAS, {
         method: 'POST', mode: 'no-cors',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({token:token, tipo:tipo, timestamp:new Date().toISOString(), userAgent:(navigator.userAgent||'').slice(0,200)})
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({token: token, tipo: tipo, timestamp: new Date().toISOString(), userAgent: (navigator.userAgent||'').slice(0,200)})
       });
     } catch(e) {}
   }
 
   var token = genToken();
 
-  // log vetrina
+  // scrive vetrina sul foglio
   logSheet(token, 'vetrina');
 
   // mostra token nella pagina
   var orn = document.querySelector('#unlock .orn');
   if (orn) {
     var d = document.createElement('div');
-    d.style.cssText = 'text-align:center;margin-bottom:1.2rem;';
-    d.innerHTML = '<div style="font-size:11px;letter-spacing:3px;color:rgba(201,169,110,0.5);text-transform:uppercase;margin-bottom:6px;">IL TUO CODICE</div><div style="border:1px solid #C9A96E;padding:8px 24px;font-size:18px;font-weight:700;color:#C9A96E;letter-spacing:6px;display:inline-block;font-family:monospace;">' + token + '</div>';
+    d.style.cssText = 'text-align:center;margin:1rem 0;';
+    d.innerHTML = '<div style="font-size:11px;letter-spacing:3px;color:rgba(201,169,110,0.5);text-transform:uppercase;margin-bottom:6px;">IL TUO CODICE</div>'
+      + '<div style="border:1px solid #C9A96E;padding:8px 24px;font-size:20px;font-weight:700;color:#C9A96E;letter-spacing:6px;display:inline-block;font-family:monospace;">' + token + '</div>';
     orn.insertAdjacentElement('afterend', d);
   }
-
-  // sezione PIN cassa
-  var unlock = document.getElementById('unlock');
-  if (unlock) {
-    var sec = document.createElement('div');
-    sec.style.cssText = 'margin-top:1.5rem;border-top:1px solid rgba(201,169,110,0.1);padding-top:1rem;width:100%;max-width:320px;text-align:center;';
-    sec.innerHTML = '<div style="font-size:10px;letter-spacing:3px;color:rgba(201,169,110,0.2);text-transform:uppercase;margin-bottom:10px;">Solo personale di cassa</div>'
-      + '<div style="display:flex;gap:8px;margin-bottom:8px;">'
-      + '<input id="biba-pin" type="password" inputmode="numeric" maxlength="4" placeholder="PIN" style="flex:1;background:transparent;border:1px solid #333;color:#888;font-size:18px;letter-spacing:6px;text-align:center;padding:8px;font-family:monospace;outline:none;"/>'
-      + '<button onclick="bibaActivate()" style="background:transparent;border:1px solid #333;color:#555;font-size:11px;letter-spacing:2px;text-transform:uppercase;padding:8px 14px;cursor:pointer;font-family:inherit;">ATTIVA</button>'
-      + '</div>'
-      + '<div id="biba-result" style="font-size:14px;font-weight:700;display:none;"></div>';
-    unlock.appendChild(sec);
-  }
-
-  var _used = 0;
-  window.bibaActivate = function() {
-    var pin = (document.getElementById('biba-pin')||{}).value || '';
-    var res = document.getElementById('biba-result');
-    res.style.display = 'block';
-    if (pin !== PIN) {
-      res.style.color='#e63946'; res.textContent='❌ PIN errato';
-      document.getElementById('biba-pin').value=''; return;
-    }
-    if (_used === 0) {
-      _used=1; res.style.color='#4caf50'; res.textContent='✅ OK — 2+1 gratis';
-      logSheet(token, 'attivazione');
-    } else if (_used === 1) {
-      _used=2; res.style.color='#f9c74f'; res.textContent='🎁 Referral — spilla gratis';
-      logSheet(token, 'referral');
-    } else {
-      res.style.color='#e63946'; res.textContent='❌ Già utilizzato';
-    }
-  };
-
 })();
 </script>
 
