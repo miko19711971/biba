@@ -136,7 +136,29 @@ function t(k) { return (labels[k]||{})[lang] || labels[k].en; }
 // ── Init ─────────────────────────────────────────────────────────────────────
 window._bibaToken = genToken();
 document.addEventListener('DOMContentLoaded', function() {
-  logSheet(window._bibaToken, 'vetrina');
+  // debug badge
+  var dbg = document.createElement('div');
+  dbg.id = 'biba-dbg';
+  dbg.style.cssText = 'position:fixed;bottom:8px;left:8px;background:#1a1a1a;color:#c9a84c;font-size:10px;padding:4px 8px;z-index:9999;border:1px solid #333;font-family:monospace;';
+  dbg.textContent = 'token: ' + window._bibaToken;
+  document.body.appendChild(dbg);
+  
+  try {
+    fetch(GAS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        token: window._bibaToken,
+        tipo: 'vetrina',
+        timestamp: new Date().toISOString(),
+        userAgent: (navigator.userAgent || '').slice(0, 200)
+      })
+    }).then(function(){ dbg.textContent += ' ✓ inviato'; })
+      .catch(function(e){ dbg.textContent += ' ✗ ' + e.message; });
+  } catch(e) {
+    dbg.textContent += ' ✗ ' + e.message;
+  }
   bibaInjectUI();
 });
 
