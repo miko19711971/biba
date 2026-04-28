@@ -109,15 +109,13 @@ function genToken() {
 function logSheet(token, tipo) {
   const now = new Date();
   const ts = now.toISOString();
-  fetch(GAS_URL, {
-    method: 'POST',
-    mode: 'no-cors',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      token, tipo, timestamp: ts,
-      userAgent: navigator.userAgent
-    })
-  }).catch(() => {});
+  const params = new URLSearchParams({
+    token: token,
+    tipo: tipo,
+    timestamp: ts,
+    userAgent: navigator.userAgent.slice(0, 200)
+  });
+  fetch(GAS_URL + '?' + params.toString(), { mode: 'no-cors' }).catch(() => {});
 }
 
 // ── Testi multilingua ────────────────────────────────────────────────────────
