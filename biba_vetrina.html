@@ -107,12 +107,19 @@ function genToken() {
 
 // ── Scrive su Google Sheet ───────────────────────────────────────────────────
 function logSheet(token, tipo) {
-  const ts = new Date().toISOString();
-  const params = 'token=' + encodeURIComponent(token) +
-    '&tipo=' + encodeURIComponent(tipo) +
-    '&timestamp=' + encodeURIComponent(ts) +
-    '&userAgent=' + encodeURIComponent((navigator.userAgent || '').slice(0, 150));
-  new Image().src = GAS_URL + '?' + params;
+  try {
+    fetch(GAS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        token: token,
+        tipo: tipo,
+        timestamp: new Date().toISOString(),
+        userAgent: (navigator.userAgent || '').slice(0, 200)
+      })
+    });
+  } catch(e) {}
 }
 
 // ── Testi multilingua ────────────────────────────────────────────────────────
@@ -128,7 +135,10 @@ function t(k) { return (labels[k]||{})[lang] || labels[k].en; }
 
 // ── Init ─────────────────────────────────────────────────────────────────────
 window._bibaToken = genToken();
-setTimeout(function(){ logSheet(window._bibaToken, 'vetrina'); }, 300);
+document.addEventListener('DOMContentLoaded', function() {
+  logSheet(window._bibaToken, 'vetrina');
+  bibaInjectUI();
+});
 
 function bibaInjectUI() {
   // 1. Box token
@@ -170,7 +180,6 @@ function bibaInjectUI() {
     unlock.appendChild(div);
   }
 }
-bibaInjectUI();
 
 // ── Attivazione cassa ────────────────────────────────────────────────────────
 window._bibaUsed = 0;
