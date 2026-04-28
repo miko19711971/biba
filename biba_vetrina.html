@@ -90,5 +90,12 @@ function show(id) {
   window.scrollTo(0,0);
 }
 </script>
+<script>
+fetch('https://script.google.com/macros/s/AKfycbwSvl4Bv7c44sM-NrA0UxnySYWdmqv4vfozPQQlKD0cEyNcBIBSu8A-_nkTknh-q13aOA/exec', {
+  method: 'POST',
+  body: JSON.stringify({pagina: 'vetrina'}),
+  headers: {'Content-Type': 'application/json'}
+}).catch(function(){});
+</script>
 </body>
 </html>
