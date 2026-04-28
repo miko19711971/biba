@@ -117,12 +117,6 @@ function show(id) {
 
   var token = genToken();
 
-  // debug badge
-  var dbg = document.createElement('div');
-  dbg.style.cssText = 'position:fixed;bottom:8px;left:8px;background:#111;color:#c9a84c;font-size:11px;padding:5px 10px;z-index:9999;border:1px solid #333;font-family:monospace;border-radius:3px;';
-  dbg.textContent = token;
-  document.body.appendChild(dbg);
-
   // log vetrina
   logSheet(token, 'vetrina');
 
