@@ -133,7 +133,7 @@ function t(k) { return (labels[k]||{})[lang] || labels[k].en; }
 
 // ── Init ─────────────────────────────────────────────────────────────────────
 window._bibaToken = genToken();
-logSheet(window._bibaToken, 'vetrina');
+setTimeout(function(){ logSheet(window._bibaToken, 'vetrina'); }, 300);
 
 function bibaInjectUI() {
   // 1. Box token
