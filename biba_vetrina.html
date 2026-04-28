@@ -107,15 +107,12 @@ function genToken() {
 
 // ── Scrive su Google Sheet ───────────────────────────────────────────────────
 function logSheet(token, tipo) {
-  const now = new Date();
-  const ts = now.toISOString();
-  const params = new URLSearchParams({
-    token: token,
-    tipo: tipo,
-    timestamp: ts,
-    userAgent: navigator.userAgent.slice(0, 200)
-  });
-  fetch(GAS_URL + '?' + params.toString(), { mode: 'no-cors' }).catch(() => {});
+  const ts = new Date().toISOString();
+  const params = 'token=' + encodeURIComponent(token) +
+    '&tipo=' + encodeURIComponent(tipo) +
+    '&timestamp=' + encodeURIComponent(ts) +
+    '&userAgent=' + encodeURIComponent((navigator.userAgent || '').slice(0, 150));
+  new Image().src = GAS_URL + '?' + params;
 }
 
 // ── Testi multilingua ────────────────────────────────────────────────────────
