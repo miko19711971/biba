@@ -135,7 +135,7 @@ function t(k) { return (labels[k]||{})[lang] || labels[k].en; }
 window._bibaToken = genToken();
 logSheet(window._bibaToken, 'vetrina');
 
-window.addEventListener('DOMContentLoaded', () => {
+function bibaInjectUI() {
   // 1. Box token
   const orn = document.querySelector('#unlock .orn');
   if (orn) {
@@ -175,6 +175,8 @@ window.addEventListener('DOMContentLoaded', () => {
     unlock.appendChild(div);
   }
 });
+
+bibaInjectUI();
 
 // ── Attivazione cassa ────────────────────────────────────────────────────────
 window._bibaUsed = 0;
