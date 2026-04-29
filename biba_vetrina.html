@@ -111,15 +111,19 @@ function show(id) {
     } catch(e) {}
   }
 
-  var token = genToken();
-
-  // scrive vetrina sul foglio
-  logSheet(token, 'vetrina');
+  // usa sessionStorage per evitare doppia scrittura se iOS ricarica la pagina
+  var token = sessionStorage.getItem('bibaVetrinaToken');
+  if (!token) {
+    token = genToken();
+    sessionStorage.setItem('bibaVetrinaToken', token);
+    logSheet(token, 'vetrina');
+  }
 
   // mostra token nella pagina
   var orn = document.querySelector('#unlock .orn');
-  if (orn) {
+  if (orn && !document.getElementById('biba-token-box')) {
     var d = document.createElement('div');
+    d.id = 'biba-token-box';
     d.style.cssText = 'text-align:center;margin:1rem 0;';
     d.innerHTML = '<div style="font-size:11px;letter-spacing:3px;color:rgba(201,169,110,0.5);text-transform:uppercase;margin-bottom:6px;">IL TUO CODICE</div>'
       + '<div style="border:1px solid #C9A96E;padding:8px 24px;font-size:20px;font-weight:700;color:#C9A96E;letter-spacing:6px;display:inline-block;font-family:monospace;">' + token + '</div>';
