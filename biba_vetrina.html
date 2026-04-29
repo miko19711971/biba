@@ -93,7 +93,8 @@ function show(id) {
 
 <script>
 (function() {
-  var GAS = 'https://script.google.com/macros/s/AKfycbx0Qd3zb39OjjG4BhOjX3Ph7h85WIYMGnBm9imZn3tSej54h4YWaAlFjfeIwG400_Jx/exec';
+  var GAS  = 'https://script.google.com/macros/s/AKfycbx0Qd3zb39OjjG4BhOjX3Ph7h85WIYMGnBm9imZn3tSej54h4YWaAlFjfeIwG400_Jx/exec';
+  var COMBO = 'https://biba-boutique.onrender.com/biba_cassa.html';
 
   function genToken() {
     var c = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', t = 'BIBA-';
@@ -111,7 +112,6 @@ function show(id) {
     } catch(e) {}
   }
 
-  // usa sessionStorage per evitare doppia scrittura se iOS ricarica la pagina
   var token = sessionStorage.getItem('bibaVetrinaToken');
   if (!token) {
     token = genToken();
@@ -119,7 +119,6 @@ function show(id) {
     logSheet(token, 'vetrina');
   }
 
-  // mostra token nella pagina
   var orn = document.querySelector('#unlock .orn');
   if (orn && !document.getElementById('biba-token-box')) {
     var d = document.createElement('div');
@@ -128,6 +127,13 @@ function show(id) {
     d.innerHTML = '<div style="font-size:11px;letter-spacing:3px;color:rgba(201,169,110,0.5);text-transform:uppercase;margin-bottom:6px;">IL TUO CODICE</div>'
       + '<div style="border:1px solid #C9A96E;padding:8px 24px;font-size:20px;font-weight:700;color:#C9A96E;letter-spacing:6px;display:inline-block;font-family:monospace;">' + token + '</div>';
     orn.insertAdjacentElement('afterend', d);
+  }
+
+  var cassaBtn = document.getElementById('unlock-cassa');
+  if (cassaBtn) {
+    cassaBtn.addEventListener('click', function() {
+      window.location.href = COMBO + '?token=' + encodeURIComponent(token);
+    });
   }
 })();
 </script>
