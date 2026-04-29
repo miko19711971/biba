@@ -195,7 +195,7 @@ document.getElementById('slides-wrapper').addEventListener('touchend', e=>{
       fetch(GAS, {
         method: 'POST', mode: 'no-cors',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({token: '', tipo: tipo, timestamp: new Date().toISOString(), userAgent: (navigator.userAgent||'').slice(0,200)})
+        body: JSON.stringify({token: '', tipo: tipo, timestamp: new Date().toISOString()})
       });
     } catch(e) {}
   }
