@@ -324,7 +324,7 @@ function speak(lang) {
     'en-GB': ['Daniel', 'Kate', 'Serena'],
     'fr-FR': ['Thomas', 'Amelie', 'Marie'],
     'de-DE': ['Anna', 'Markus', 'Yannick'],
-    'es-ES': ['Monica', 'Jorge', 'Marisol'],
+    'es-ES': ['Monica', 'Mónica', 'Paulina', 'Marisol', 'Esperanza', 'Jimena'],
     'pt-PT': ['Joana', 'Luciana'],
     'ru-RU': ['Milena', 'Yuri'],
     'zh-CN': ['Tingting', 'Sinji'],
@@ -341,11 +341,16 @@ function speak(lang) {
 
   // 1. Try preferred native voices
   let best = voices.find(v => names.some(n => v.name.includes(n)));
-  // 2. Try any enhanced/premium voice for this language
+  // 2. For Spanish: try any female voice (es-ES or es-MX)
+  if (!best && baseLang === 'es') {
+    best = voices.find(v => v.lang.startsWith('es') && !v.name.toLowerCase().includes('compact') && (v.name.includes('a') || v.name.includes('Monica') || v.name.includes('Paulina')));
+    if (!best) best = voices.find(v => v.lang.startsWith('es') && !v.name.toLowerCase().includes('compact'));
+  }
+  // 3. Try any enhanced/premium voice for this language
   if (!best) best = voices.find(v => v.lang === lang && !v.name.toLowerCase().includes('compact'));
-  // 3. Try any local voice for this language
+  // 4. Try any local voice for this language
   if (!best) best = voices.find(v => v.lang === lang && v.localService);
-  // 4. Fallback: any voice matching base language
+  // 5. Fallback: any voice matching base language
   if (!best) best = voices.find(v => v.lang.startsWith(baseLang));
 
   if (best) utter.voice = best;
