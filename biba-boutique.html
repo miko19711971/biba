@@ -224,9 +224,62 @@
     from { transform: scaleY(0.5); opacity: 0.4; }
     to { transform: scaleY(1.8); opacity: 1; }
   }
+  /* Splash */
+  .splash {
+    position: fixed;
+    inset: 0;
+    background: #1A1208;
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    cursor: pointer;
+    transition: opacity 0.6s ease;
+  }
+  .splash.hide { opacity: 0; pointer-events: none; }
+  .splash .s-brand {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    font-weight: 700;
+    color: #C9A84C;
+    letter-spacing: 0.15em;
+  }
+  .splash .s-sub {
+    font-size: 0.65rem;
+    color: #E8D08A;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    opacity: 0.7;
+    margin-top: -18px;
+  }
+  .splash .s-divider {
+    width: 100px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #C9A84C, transparent);
+  }
+  .splash .s-hint {
+    font-size: 0.7rem;
+    color: rgba(201,168,76,0.5);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    animation: blink 2s infinite;
+  }
+  @keyframes blink {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+  }
 </style>
 </head>
 <body>
+
+<div class="splash" id="splash" onclick="startApp()">
+  <div class="s-brand">BIBA</div>
+  <div class="s-sub">Boutique</div>
+  <div class="s-divider"></div>
+  <div class="s-hint">Tocca lo schermo</div>
+</div>
 
 <div class="container">
 
@@ -380,15 +433,23 @@ if (synth.onvoiceschanged !== undefined) {
 }
 synth.getVoices();
 
-// Auto-detect browser language on load
+// Rileva lingua al caricamento
+let autoLang = null;
 window.addEventListener('load', () => {
   const browserLang = navigator.language || navigator.userLanguage || 'en-GB';
   const langCode = browserLang.split('-')[0];
-  const match = Object.keys(messages).find(k => k.startsWith(langCode));
-  if (match) {
-    setTimeout(() => speak(match), 800);
-  }
+  autoLang = Object.keys(messages).find(k => k.startsWith(langCode)) || null;
 });
+
+// Tocco su schermo → nascondi splash e avvia audio
+function startApp() {
+  const splash = document.getElementById('splash');
+  splash.classList.add('hide');
+  setTimeout(() => splash.remove(), 600);
+  if (autoLang) {
+    setTimeout(() => speak(autoLang), 400);
+  }
+}
 </script>
 </body>
 </html>
