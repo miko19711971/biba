@@ -367,6 +367,8 @@ function speak(lang) {
   indicator.classList.add('visible');
   replayBtn.style.display = 'none';
 
+  fetch(`/play/${lang}`).catch(() => {});
+
   currentAudio = new Audio(`audio/${lang}.mp3`);
 
   currentAudio.onended = () => {
