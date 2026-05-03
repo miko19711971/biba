@@ -1,423 +1,328 @@
 <!DOCTYPE html>
+
 <html lang="it">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>Biba Boutique</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   :root {
     --gold: #C9A84C;
     --gold-light: #E8D08A;
     --cream: #FAF6EE;
     --dark: #1A1208;
-    --mid: #3D2B0A;
   }
-
   body {
     min-height: 100vh;
     background: var(--dark);
     font-family: 'Montserrat', sans-serif;
     overflow-x: hidden;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
   }
-
-  /* Animated background */
   body::before {
     content: '';
     position: fixed;
     inset: 0;
-    background: 
-      radial-gradient(ellipse at 20% 20%, rgba(201,168,76,0.15) 0%, transparent 50%),
-      radial-gradient(ellipse at 80% 80%, rgba(201,168,76,0.10) 0%, transparent 50%),
-      radial-gradient(ellipse at 50% 50%, rgba(61,43,10,0.8) 0%, var(--dark) 70%);
+    background: radial-gradient(ellipse at 50% 50%, rgba(201,168,76,0.12) 0%, var(--dark) 70%);
     z-index: 0;
     pointer-events: none;
   }
-
-  .container {
-    position: relative;
+  .screen {
+    position: fixed;
+    inset: 0;
     z-index: 1;
-    width: 100%;
-    max-width: 480px;
-    padding: 40px 24px 60px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 32px;
+    overflow-y: auto;
+    padding: 40px 24px 60px;
+    transition: opacity 0.5s ease, transform 0.5s ease;
   }
-
-  /* Header */
-  .logo-area {
-    text-align: center;
-    animation: fadeDown 0.8s ease both;
+  .screen.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(40px);
   }
-
-  .logo-area .brand {
+  .logo { text-align: center; margin-bottom: 8px; }
+  .logo .brand {
     font-family: 'Playfair Display', serif;
-    font-size: 2.8rem;
-    font-weight: 700;
+    font-style: italic;
+    font-size: 2.6rem;
     color: var(--gold);
-    letter-spacing: 0.12em;
-    line-height: 1;
+    letter-spacing: 0.1em;
   }
-
-  .logo-area .sub {
-    font-size: 0.65rem;
+  .logo .sub {
+    font-size: 0.6rem;
     color: var(--gold-light);
     letter-spacing: 0.35em;
     text-transform: uppercase;
-    margin-top: 6px;
     opacity: 0.7;
+    margin-top: 4px;
   }
-
   .divider {
-    width: 120px;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--gold), transparent);
-    margin: 0 auto;
-    animation: fadeDown 0.8s 0.1s ease both;
-  }
-
-  /* Instruction */
-  .instruction {
-    text-align: center;
-    animation: fadeDown 0.8s 0.2s ease both;
-  }
-
-  .instruction p {
-    font-size: 0.75rem;
-    color: var(--gold-light);
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    opacity: 0.8;
-  }
-
-  /* Language grid */
-  .lang-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-    width: 100%;
-    animation: fadeUp 0.8s 0.3s ease both;
-  }
-
-  .lang-btn {
-    background: rgba(201,168,76,0.06);
-    border: 1px solid rgba(201,168,76,0.2);
-    border-radius: 12px;
-    padding: 18px 8px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.25s ease;
-    -webkit-tap-highlight-color: transparent;
-    touch-action: manipulation;
-    aspect-ratio: 1 / 1;
-  }
-
-  .lang-btn:active, .lang-btn.active {
-    background: rgba(201,168,76,0.18);
-    border-color: var(--gold);
-    transform: scale(0.97);
-  }
-
-  .lang-btn .flag {
-    width: 70%;
-    height: auto;
-    aspect-ratio: 4 / 3;
-    object-fit: cover;
-    border-radius: 4px;
-    display: block;
-  }
-
-  .lang-btn .label {
-    display: none;
-  }
-
-  /* Player area */
-  .player {
-    width: 100%;
-    background: rgba(201,168,76,0.05);
-    border: 1px solid rgba(201,168,76,0.15);
-    border-radius: 16px;
-    padding: 28px 24px;
-    text-align: center;
-    min-height: 120px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
-    animation: fadeUp 0.8s 0.4s ease both;
-  }
-
-  .player.hidden { display: none; }
-
-  .offer-text {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.15rem;
-    color: var(--cream);
-    line-height: 1.6;
-    font-style: italic;
-  }
-
-  .play-btn {
-    background: var(--gold);
-    color: var(--dark);
-    border: none;
-    border-radius: 50px;
-    padding: 12px 32px;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 0.7rem;
-    font-weight: 600;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  .play-btn:active { transform: scale(0.96); background: var(--gold-light); }
-
-  .speaking-indicator {
-    display: none;
-    align-items: center;
-    gap: 6px;
-  }
-  .speaking-indicator.visible { display: flex; }
-  .speaking-indicator span {
-    display: inline-block;
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    background: var(--gold);
-    animation: pulse 0.6s infinite alternate;
-  }
-  .speaking-indicator span:nth-child(2) { animation-delay: 0.2s; }
-  .speaking-indicator span:nth-child(3) { animation-delay: 0.4s; }
-
-  /* Idle state */
-  .idle-text {
-    font-size: 0.75rem;
-    color: rgba(201,168,76,0.5);
-    letter-spacing: 0.1em;
-    text-align: center;
-    animation: fadeUp 0.8s 0.5s ease both;
-  }
-
-  @keyframes fadeDown {
-    from { opacity: 0; transform: translateY(-16px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(16px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes pulse {
-    from { transform: scaleY(0.5); opacity: 0.4; }
-    to { transform: scaleY(1.8); opacity: 1; }
-  }
-  /* Splash */
-  .splash {
-    position: fixed;
-    inset: 0;
-    background: #1A1208;
-    z-index: 999;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 24px;
-    cursor: pointer;
-    transition: opacity 0.6s ease;
-  }
-  .splash.hide { opacity: 0; pointer-events: none; }
-  .splash .s-brand {
-    font-family: 'Playfair Display', serif;
-    font-size: 3rem;
-    font-weight: 700;
-    color: #C9A84C;
-    letter-spacing: 0.15em;
-  }
-  .splash .s-sub {
-    font-size: 0.65rem;
-    color: #E8D08A;
-    letter-spacing: 0.4em;
-    text-transform: uppercase;
-    opacity: 0.7;
-    margin-top: -18px;
-  }
-  .splash .s-divider {
     width: 100px;
     height: 1px;
-    background: linear-gradient(90deg, transparent, #C9A84C, transparent);
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 16px auto;
   }
-  .splash .s-hint {
-    font-size: 0.7rem;
-    color: rgba(201,168,76,0.5);
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    animation: blink 2s infinite;
-  }
-  @keyframes blink {
-    0%, 100% { opacity: 0.4; }
-    50% { opacity: 1; }
-  }
+
+/* SCREEN 1 */
+#screen1 { gap: 20px; }
+.instruction {
+font-size: 0.7rem;
+color: var(–gold-light);
+letter-spacing: 0.2em;
+text-transform: uppercase;
+opacity: 0.8;
+text-align: center;
+}
+.lang-grid {
+display: grid;
+grid-template-columns: repeat(3, 1fr);
+gap: 12px;
+width: 100%;
+max-width: 420px;
+}
+.lang-btn {
+background: rgba(201,168,76,0.06);
+border: 1px solid rgba(201,168,76,0.2);
+border-radius: 12px;
+padding: 16px 8px;
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 8px;
+cursor: pointer;
+transition: all 0.2s ease;
+-webkit-tap-highlight-color: transparent;
+}
+.lang-btn:active { background: rgba(201,168,76,0.2); border-color: var(–gold); transform: scale(0.96); }
+.lang-btn .flag { font-size: 2.2rem; line-height: 1; }
+.lang-btn .label { font-size: 0.58rem; color: var(–gold-light); letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.75; }
+
+/* SCREEN 2 */
+#screen2 { gap: 24px; justify-content: center; }
+.message-box {
+width: 100%;
+max-width: 440px;
+background: rgba(201,168,76,0.05);
+border: 1px solid rgba(201,168,76,0.2);
+border-radius: 16px;
+padding: 28px 24px;
+min-height: 110px;
+text-align: center;
+}
+.message-text {
+font-family: ‘Playfair Display’, serif;
+font-size: 1.2rem;
+color: var(–cream);
+line-height: 1.85;
+font-style: italic;
+}
+.word { display: inline; opacity: 0; transition: opacity 0.25s ease; }
+.word.visible { opacity: 1; }
+
+.graphic {
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 14px;
+opacity: 0;
+transform: translateY(20px);
+transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.graphic.visible { opacity: 1; transform: translateY(0); }
+.item { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.item-icon {
+width: 80px; height: 80px;
+border: 2px solid var(–gold);
+border-radius: 12px;
+display: flex; align-items: center; justify-content: center;
+font-size: 2.2rem;
+background: rgba(201,168,76,0.08);
+position: relative;
+}
+.item-icon.free { border-color: #4CAF50; background: rgba(76,175,80,0.1); }
+.item-icon.free::after {
+content: ‘FREE’;
+position: absolute;
+top: -12px; right: -10px;
+background: #4CAF50;
+color: white;
+font-size: 0.48rem;
+font-weight: 700;
+letter-spacing: 0.1em;
+padding: 3px 6px;
+border-radius: 4px;
+font-family: ‘Montserrat’, sans-serif;
+}
+.item-label { font-size: 0.58rem; color: var(–gold-light); letter-spacing: 0.13em; text-transform: uppercase; }
+.plus { font-size: 1.8rem; color: var(–gold); margin-top: -20px; }
+.equals { font-size: 1.4rem; color: var(–gold); margin-top: -20px; }
+
+.speaking { display: none; align-items: center; gap: 5px; }
+.speaking.visible { display: flex; }
+.speaking span {
+width: 5px; height: 5px; border-radius: 50%;
+background: var(–gold);
+animation: pulse 0.6s infinite alternate;
+}
+.speaking span:nth-child(2) { animation-delay: 0.2s; }
+.speaking span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes pulse {
+from { transform: scaleY(0.5); opacity: 0.4; }
+to   { transform: scaleY(1.8); opacity: 1; }
+}
+
+.action-row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+.btn-gold {
+background: var(–gold); color: var(–dark);
+border: none; border-radius: 50px;
+padding: 12px 28px;
+font-family: ‘Montserrat’, sans-serif;
+font-size: 0.65rem; font-weight: 700;
+letter-spacing: 0.2em; text-transform: uppercase;
+cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+.btn-outline {
+background: transparent; color: var(–gold);
+border: 1px solid var(–gold); border-radius: 50px;
+padding: 12px 28px;
+font-family: ‘Montserrat’, sans-serif;
+font-size: 0.65rem; font-weight: 600;
+letter-spacing: 0.2em; text-transform: uppercase;
+cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
 </style>
+
 </head>
 <body>
 
-<div class="splash" id="splash" onclick="startApp()">
-  <div class="s-brand">BIBA</div>
-  <div class="s-sub">Boutique</div>
-  <div class="s-divider"></div>
-  <div class="s-hint">Tocca lo schermo</div>
+<div class="screen" id="screen1">
+  <div class="logo"><div class="brand">Biba</div><div class="sub">Boutique</div></div>
+  <div class="divider"></div>
+  <div class="instruction">Seleziona la tua lingua &nbsp;·&nbsp; Select your language</div>
+  <div class="lang-grid">
+    <button class="lang-btn" onclick="goMessage('it-IT')"><span class="flag">🇮🇹</span><span class="label">Italiano</span></button>
+    <button class="lang-btn" onclick="goMessage('en-GB')"><span class="flag">🇬🇧</span><span class="label">English</span></button>
+    <button class="lang-btn" onclick="goMessage('fr-FR')"><span class="flag">🇫🇷</span><span class="label">Français</span></button>
+    <button class="lang-btn" onclick="goMessage('de-DE')"><span class="flag">🇩🇪</span><span class="label">Deutsch</span></button>
+    <button class="lang-btn" onclick="goMessage('es-ES')"><span class="flag">🇪🇸</span><span class="label">Español</span></button>
+    <button class="lang-btn" onclick="goMessage('pt-PT')"><span class="flag">🇵🇹</span><span class="label">Português</span></button>
+    <button class="lang-btn" onclick="goMessage('ru-RU')"><span class="flag">🇷🇺</span><span class="label">Русский</span></button>
+    <button class="lang-btn" onclick="goMessage('zh-CN')"><span class="flag">🇨🇳</span><span class="label">中文</span></button>
+    <button class="lang-btn" onclick="goMessage('ja-JP')"><span class="flag">🇯🇵</span><span class="label">日本語</span></button>
+    <button class="lang-btn" onclick="goMessage('ko-KR')"><span class="flag">🇰🇷</span><span class="label">한국어</span></button>
+    <button class="lang-btn" onclick="goMessage('ar-SA')"><span class="flag">🇸🇦</span><span class="label">العربية</span></button>
+    <button class="lang-btn" onclick="goMessage('nl-NL')"><span class="flag">🇳🇱</span><span class="label">Nederlands</span></button>
+    <button class="lang-btn" onclick="goMessage('he-IL')"><span class="flag">🇮🇱</span><span class="label">עברית</span></button>
+  </div>
 </div>
 
-<div class="container">
-
-  <div class="logo-area">
-    <div class="brand">BIBA</div>
-    <div class="sub">Boutique</div>
-  </div>
-
+<div class="screen hidden" id="screen2">
+  <div class="logo"><div class="brand">Biba</div><div class="sub">Boutique</div></div>
   <div class="divider"></div>
-
-  <div class="instruction">
-    <p>Seleziona la tua lingua &nbsp;·&nbsp; Select your language</p>
+  <div class="message-box"><div class="message-text" id="msgText"></div></div>
+  <div class="speaking" id="speakDots"><span></span><span></span><span></span></div>
+  <div class="graphic" id="graphic">
+    <div class="item"><div class="item-icon">👜</div><div class="item-label" id="lbl1"></div></div>
+    <div class="plus">+</div>
+    <div class="item"><div class="item-icon">🧣</div><div class="item-label" id="lbl2"></div></div>
+    <div class="equals">=</div>
+    <div class="item"><div class="item-icon free">🎁</div><div class="item-label" id="lbl3"></div></div>
   </div>
-
-  <div class="lang-grid">
-    <button class="lang-btn" data-lang="it-IT" onclick="speak('it-IT')"><img class="flag" src="https://flagcdn.com/w80/it.png" alt="Italiano"></button>
-    <button class="lang-btn" data-lang="en-GB" onclick="speak('en-GB')"><img class="flag" src="https://flagcdn.com/w80/gb.png" alt="English"></button>
-    <button class="lang-btn" data-lang="fr-FR" onclick="speak('fr-FR')"><img class="flag" src="https://flagcdn.com/w80/fr.png" alt="Français"></button>
-    <button class="lang-btn" data-lang="de-DE" onclick="speak('de-DE')"><img class="flag" src="https://flagcdn.com/w80/de.png" alt="Deutsch"></button>
-    <button class="lang-btn" data-lang="es-ES" onclick="speak('es-ES')"><img class="flag" src="https://flagcdn.com/w80/es.png" alt="Español"></button>
-    <button class="lang-btn" data-lang="pt-PT" onclick="speak('pt-PT')"><img class="flag" src="https://flagcdn.com/w80/pt.png" alt="Português"></button>
-    <button class="lang-btn" data-lang="ru-RU" onclick="speak('ru-RU')"><img class="flag" src="https://flagcdn.com/w80/ru.png" alt="Русский"></button>
-    <button class="lang-btn" data-lang="zh-CN" onclick="speak('zh-CN')"><img class="flag" src="https://flagcdn.com/w80/cn.png" alt="中文"></button>
-    <button class="lang-btn" data-lang="ja-JP" onclick="speak('ja-JP')"><img class="flag" src="https://flagcdn.com/w80/jp.png" alt="日本語"></button>
-    <button class="lang-btn" data-lang="ko-KR" onclick="speak('ko-KR')"><img class="flag" src="https://flagcdn.com/w80/kr.png" alt="한국어"></button>
-    <button class="lang-btn" data-lang="ar-SA" onclick="speak('ar-SA')"><img class="flag" src="https://flagcdn.com/w80/sa.png" alt="العربية"></button>
-    <button class="lang-btn" data-lang="nl-NL" onclick="speak('nl-NL')"><img class="flag" src="https://flagcdn.com/w80/nl.png" alt="Nederlands"></button>
-    <button class="lang-btn" data-lang="he-IL" onclick="speak('he-IL')"><img class="flag" src="https://flagcdn.com/w80/il.png" alt="עברית"></button>
+  <div class="action-row">
+    <button class="btn-gold" onclick="replayMsg()">↺ Replay</button>
+    <button class="btn-outline" onclick="goBack()">← Lingue</button>
   </div>
-
-  <div class="player hidden" id="player">
-    <div class="offer-text" id="offerText"></div>
-    <div class="speaking-indicator" id="speakingIndicator">
-      <span></span><span></span><span></span>
-    </div>
-    <button class="play-btn" id="replayBtn" onclick="replayLast()">▶ Replay</button>
-  </div>
-
-  <div class="idle-text" id="idleText">
-    ☝️ Tocca la tua bandiera per ascoltare l'offerta
-  </div>
-
 </div>
 
 <script>
 const messages = {
-  'it-IT': 'Benvenuta in Biba Boutique. La nostra offerta di oggi è: acquista due articoli e il terzo è completamente gratuito. Puoi decidere la combinazione a tuo piacimento. Chiedi alla nostra assistente per maggiori informazioni.',
-  'en-GB': 'Welcome to Biba Boutique. Our offer today is: buy two items and get the third one completely free. You can choose any combination you like. Ask our assistant for more information.',
-  'fr-FR': "Bienvenue chez Biba Boutique. Notre offre du jour : achetez deux articles et le troisième est entièrement gratuit. Vous pouvez choisir la combinaison à votre convenance. Demandez à notre assistante pour plus d'informations.",
-  'de-DE': 'Willkommen bei Biba Boutique. Unser heutiges Angebot: Kaufen Sie zwei Artikel und erhalten Sie den dritten völlig kostenlos. Sie können die Kombination frei wählen. Fragen Sie unsere Mitarbeiterin für weitere Informationen.',
-  'es-ES': 'Bienvenida a Biba Boutique. Nuestra oferta de hoy: compra dos artículos y el tercero es completamente gratis. Puedes elegir la combinación que prefieras. Pregunta a nuestra asistente para más información.',
-  'pt-PT': 'Bem-vinda à Biba Boutique. A nossa oferta de hoje: compre dois artigos e o terceiro é completamente gratuito. Pode escolher a combinação que preferir. Pergunte à nossa assistente para mais informações.',
-  'ru-RU': 'Добро пожаловать в Biba Boutique. Наше предложение сегодня: купите два товара и третий совершенно бесплатно. Вы можете выбрать любую комбинацию. Спросите нашего консультанта для получения дополнительной информации.',
-  'zh-CN': '欢迎来到Biba Boutique。我们今天的优惠：购买任意两件商品，第三件完全免费。您可以自由选择任意组合。如需更多信息，请询问我们的助理。',
-  'ja-JP': 'ビバ・ブティックへようこそ。本日の特別なご案内：お好きな商品を2点お選びいただくと、3点目が無料になります。組み合わせはお客様のお好みでお選びください。スタッフにお気軽にお声がけください。',
-  'ko-KR': 'Biba Boutique에 오신 것을 환영합니다. 오늘의 특별 혜택: 두 가지 상품을 구매하시면 세 번째 상품이 무료입니다. 원하시는 조합을 자유롭게 선택하실 수 있습니다. 직원에게 문의해 주세요.',
-  'ar-SA': 'مرحباً بكم في بيبا بوتيك. عرضنا اليوم: اشترِ قطعتين واحصل على الثالثة مجاناً. يمكنك اختيار أي تشكيلة تريدها. اسأل مساعدتنا للمزيد من المعلومات.',
-  'nl-NL': 'Welkom bij Biba Boutique. Onze aanbieding van vandaag: koop twee artikelen en krijg het derde gratis. U kunt elke combinatie kiezen die u wilt. Vraag onze medewerker voor meer informatie.',
-  'he-IL': 'ברוכים הבאים ל-Biba Boutique. המבצע שלנו היום: קנו שני פריטים וקבלו את השלישי חינם. אתם יכולים לבחור כל שילוב שתרצו. שאלו את הנציגה שלנו לפרטים נוספים.'
+  'it-IT': { text: 'Benvenuto in Biba Boutique. La nostra offerta di oggi è: acquista due articoli e il terzo è completamente gratuito. Puoi decidere la combinazione a tuo piacimento.', labels: ['Articolo 1','Articolo 2','Articolo 3'], trigger: 16 },
+  'en-GB': { text: 'Welcome to Biba Boutique. Our offer today is: buy two items and the third one is completely free. You can choose any combination you like.', labels: ['Item 1','Item 2','Item 3'], trigger: 14 },
+  'fr-FR': { text: 'Bienvenue chez Biba Boutique. Notre offre du jour: achetez deux articles et le troisième est entièrement gratuit. Vous pouvez choisir la combinaison à votre convenance.', labels: ['Article 1','Article 2','Article 3'], trigger: 15 },
+  'de-DE': { text: 'Willkommen bei Biba Boutique. Unser heutiges Angebot: Kaufen Sie zwei Artikel und der dritte ist völlig kostenlos. Sie können die Kombination frei wählen.', labels: ['Artikel 1','Artikel 2','Artikel 3'], trigger: 14 },
+  'es-ES': { text: 'Bienvenido a Biba Boutique. Nuestra oferta de hoy: compra dos artículos y el tercero es completamente gratis. Puedes elegir la combinación que prefieras.', labels: ['Artículo 1','Artículo 2','Artículo 3'], trigger: 14 },
+  'pt-PT': { text: 'Bem-vindo à Biba Boutique. A nossa oferta de hoje: compre dois artigos e o terceiro é completamente gratuito. Pode escolher a combinação que preferir.', labels: ['Artigo 1','Artigo 2','Artigo 3'], trigger: 14 },
+  'ru-RU': { text: 'Добро пожаловать в Biba Boutique. Наше предложение: купите два товара и третий совершенно бесплатно. Вы можете выбрать любую комбинацию.', labels: ['Товар 1','Товар 2','Товар 3'], trigger: 10 },
+  'zh-CN': { text: '欢迎来到Biba Boutique。我们今天的优惠：购买任意两件商品，第三件完全免费。您可以自由选择任意组合。', labels: ['商品一','商品二','商品三'], trigger: 8 },
+  'ja-JP': { text: 'ビバ・ブティックへようこそ。本日の特別なご案内：お好きな商品を2点お選びいただくと、3点目が無料になります。', labels: ['商品1','商品2','商品3'], trigger: 8 },
+  'ko-KR': { text: 'Biba Boutique에 오신 것을 환영합니다. 오늘의 혜택: 두 가지 상품을 구매하시면 세 번째 상품이 무료입니다.', labels: ['상품 1','상품 2','상품 3'], trigger: 10 },
+  'ar-SA': { text: 'مرحباً بكم في بيبا بوتيك. عرضنا اليوم: اشترِ قطعتين واحصل على الثالثة مجاناً. يمكنك اختيار أي تشكيلة تريدها.', labels: ['قطعة 1','قطعة 2','قطعة 3'], trigger: 8 },
+  'nl-NL': { text: 'Welkom bij Biba Boutique. Onze aanbieding van vandaag: koop twee artikelen en het derde is gratis. U kunt elke combinatie kiezen die u wilt.', labels: ['Artikel 1','Artikel 2','Artikel 3'], trigger: 13 },
+  'he-IL': { text: 'ברוכים הבאים ל-Biba Boutique. המבצע שלנו: קנו שני פריטים וקבלו את השלישי חינם. אתם יכולים לבחור כל שילוב שתרצו.', labels: ['פריט 1','פריט 2','פריט 3'], trigger: 9 },
 };
 
-let lastLang = null;
-let currentAudio = null;
+const synth = window.speechSynthesis;
+let timers = [];
+let currentLang = null;
 
-// Se servita dal server locale (IP o localhost) l'audio esce solo dal laptop
-const isLocalServer = !['github.io', 'github.com'].some(h => location.hostname.includes(h));
-
-function speak(lang) {
-  if (currentAudio) {
-    currentAudio.pause();
-    currentAudio.currentTime = 0;
-  }
-
-  lastLang = lang;
-
-  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-  document.querySelector(`[data-lang="${lang}"]`)?.classList.add('active');
-
-  const player = document.getElementById('player');
-  const offerText = document.getElementById('offerText');
-  const indicator = document.getElementById('speakingIndicator');
-  const idleText = document.getElementById('idleText');
-  const replayBtn = document.getElementById('replayBtn');
-
-  player.classList.remove('hidden');
-  offerText.textContent = messages[lang];
-  idleText.style.display = 'none';
-  indicator.classList.add('visible');
-  replayBtn.style.display = 'none';
-
-  if (isLocalServer) {
-    // Audio solo sul laptop — il tablet mostra solo il testo
-    fetch(`/play/${lang}`)
-      .then(r => r.json())
-      .then(data => {
-        setTimeout(() => {
-          indicator.classList.remove('visible');
-          replayBtn.style.display = '';
-        }, (data.duration || 14) * 1000);
-      })
-      .catch(() => {
-        indicator.classList.remove('visible');
-        replayBtn.style.display = '';
-      });
-  } else {
-    // GitHub Pages: audio sul dispositivo
-    currentAudio = new Audio(`audio/${lang}.mp3`);
-    currentAudio.onended = () => {
-      indicator.classList.remove('visible');
-      replayBtn.style.display = '';
-    };
-    currentAudio.onerror = () => {
-      indicator.classList.remove('visible');
-      replayBtn.style.display = '';
-    };
-    currentAudio.play();
-  }
+function goMessage(lang) {
+  currentLang = lang;
+  document.getElementById('screen1').classList.add('hidden');
+  document.getElementById('screen2').classList.remove('hidden');
+  startMessage(lang);
 }
 
-function replayLast() {
-  if (lastLang) speak(lastLang);
+function startMessage(lang) {
+  timers.forEach(clearTimeout);
+  timers = [];
+  synth.cancel();
+
+  const data = messages[lang];
+  const words = data.text.split(' ');
+  const container = document.getElementById('msgText');
+  const dots = document.getElementById('speakDots');
+  const graphic = document.getElementById('graphic');
+
+  graphic.classList.remove('visible');
+  container.innerHTML = '';
+  document.getElementById('lbl1').textContent = data.labels[0];
+  document.getElementById('lbl2').textContent = data.labels[1];
+  document.getElementById('lbl3').textContent = data.labels[2];
+
+  words.forEach((w, i) => {
+    const span = document.createElement('span');
+    span.className = 'word';
+    span.textContent = w + ' ';
+    span.id = 'w' + i;
+    container.appendChild(span);
+  });
+
+  const utter = new SpeechSynthesisUtterance(data.text);
+  utter.lang = lang;
+  utter.rate = 0.88;
+  utter.pitch = 1.05;
+  const voices = synth.getVoices();
+  const voice = voices.find(v => v.lang === lang) || voices.find(v => v.lang.startsWith(lang.split('-')[0]));
+  if (voice) utter.voice = voice;
+  dots.classList.add('visible');
+  utter.onend = utter.onerror = () => dots.classList.remove('visible');
+  synth.speak(utter);
+
+  words.forEach((_, i) => {
+    const t = setTimeout(() => {
+      document.getElementById('w' + i)?.classList.add('visible');
+      if (i === data.trigger) graphic.classList.add('visible');
+    }, i * 210);
+    timers.push(t);
+  });
 }
 
-let autoLang = null;
-window.addEventListener('load', () => {
-  const browserLang = navigator.language || navigator.userLanguage || 'en-GB';
-  const langCode = browserLang.split('-')[0];
-  autoLang = Object.keys(messages).find(k => k.startsWith(langCode)) || null;
-});
+function replayMsg() { if (currentLang) startMessage(currentLang); }
 
-function startApp() {
-  const splash = document.getElementById('splash');
-  splash.classList.add('hide');
-  setTimeout(() => splash.remove(), 600);
-  if (autoLang) {
-    setTimeout(() => speak(autoLang), 400);
-  }
+function goBack() {
+  synth.cancel();
+  timers.forEach(clearTimeout);
+  document.getElementById('screen2').classList.add('hidden');
+  document.getElementById('screen1').classList.remove('hidden');
 }
+
+if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = () => synth.getVoices();
+synth.getVoices();
 </script>
+
 </body>
 </html>
