@@ -326,12 +326,12 @@
 
 <script>
 const messages = {
-  'it-IT': 'Benvenuto in Biba Boutique. La nostra offerta di oggi è: acquista due articoli e il terzo è completamente gratuito. Puoi decidere la combinazione a tuo piacimento. Chiedi alla nostra assistente per maggiori informazioni.',
+  'it-IT': 'Benvenuta in Biba Boutique. La nostra offerta di oggi è: acquista due articoli e il terzo è completamente gratuito. Puoi decidere la combinazione a tuo piacimento. Chiedi alla nostra assistente per maggiori informazioni.',
   'en-GB': 'Welcome to Biba Boutique. Our offer today is: buy two items and get the third one completely free. You can choose any combination you like. Ask our assistant for more information.',
-  'fr-FR': 'Bienvenue chez Biba Boutique. Notre offre du jour : achetez deux articles et le troisième est entièrement gratuit. Vous pouvez choisir la combinaison à votre convenance. Demandez à notre assistante pour plus d\'informations.',
+  'fr-FR': "Bienvenue chez Biba Boutique. Notre offre du jour : achetez deux articles et le troisième est entièrement gratuit. Vous pouvez choisir la combinaison à votre convenance. Demandez à notre assistante pour plus d'informations.",
   'de-DE': 'Willkommen bei Biba Boutique. Unser heutiges Angebot: Kaufen Sie zwei Artikel und erhalten Sie den dritten völlig kostenlos. Sie können die Kombination frei wählen. Fragen Sie unsere Mitarbeiterin für weitere Informationen.',
-  'es-ES': 'Bienvenido a Biba Boutique. Nuestra oferta de hoy: compra dos artículos y el tercero es completamente gratis. Puedes elegir la combinación que prefieras. Pregunta a nuestra asistente para más información.',
-  'pt-PT': 'Bem-vindo à Biba Boutique. A nossa oferta de hoje: compre dois artigos e o terceiro é completamente gratuito. Pode escolher a combinação que preferir. Pergunte à nossa assistente para mais informações.',
+  'es-ES': 'Bienvenida a Biba Boutique. Nuestra oferta de hoy: compra dos artículos y el tercero es completamente gratis. Puedes elegir la combinación que prefieras. Pregunta a nuestra asistente para más información.',
+  'pt-PT': 'Bem-vinda à Biba Boutique. A nossa oferta de hoje: compre dois artigos e o terceiro é completamente gratuito. Pode escolher a combinação que preferir. Pergunte à nossa assistente para mais informações.',
   'ru-RU': 'Добро пожаловать в Biba Boutique. Наше предложение сегодня: купите два товара и третий совершенно бесплатно. Вы можете выбрать любую комбинацию. Спросите нашего консультанта для получения дополнительной информации.',
   'zh-CN': '欢迎来到Biba Boutique。我们今天的优惠：购买任意两件商品，第三件完全免费。您可以自由选择任意组合。如需更多信息，请询问我们的助理。',
   'ja-JP': 'ビバ・ブティックへようこそ。本日の特別なご案内：お好きな商品を2点お選びいただくと、3点目が無料になります。組み合わせはお客様のお好みでお選びください。スタッフにお気軽にお声がけください。',
@@ -342,19 +342,19 @@ const messages = {
 };
 
 let lastLang = null;
-let synth = window.speechSynthesis;
+let currentAudio = null;
 
 function speak(lang) {
-  synth.cancel();
+  if (currentAudio) {
+    currentAudio.pause();
+    currentAudio.currentTime = 0;
+  }
+
   lastLang = lang;
 
-  // Highlight active button
   document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
   document.querySelector(`[data-lang="${lang}"]`)?.classList.add('active');
 
-  const text = messages[lang];
-
-  // Show player
   const player = document.getElementById('player');
   const offerText = document.getElementById('offerText');
   const indicator = document.getElementById('speakingIndicator');
@@ -362,78 +362,29 @@ function speak(lang) {
   const replayBtn = document.getElementById('replayBtn');
 
   player.classList.remove('hidden');
-  offerText.textContent = text;
+  offerText.textContent = messages[lang];
   idleText.style.display = 'none';
-
-  const utter = new SpeechSynthesisUtterance(text);
-  utter.lang = lang;
-  utter.rate = 0.82;
-  utter.pitch = 1.0;
-  utter.volume = 1.0;
-
-  // Preferred native voices per language (iOS enhanced voices)
-  const preferred = {
-    'it-IT': ['Alice', 'Federica', 'Luca'],
-    'en-GB': ['Daniel', 'Kate', 'Serena'],
-    'fr-FR': ['Thomas', 'Amelie', 'Marie'],
-    'de-DE': ['Anna', 'Markus', 'Yannick'],
-    'es-ES': ['Monica', 'Mónica', 'Paulina', 'Marisol', 'Esperanza', 'Jimena'],
-    'pt-PT': ['Joana', 'Luciana'],
-    'ru-RU': ['Milena', 'Yuri'],
-    'zh-CN': ['Tingting', 'Sinji'],
-    'ja-JP': ['Kyoko', 'Otoya'],
-    'ko-KR': ['Yuna', 'Sora'],
-    'ar-SA': ['Maged', 'Tarik'],
-    'nl-NL': ['Xander', 'Claire'],
-    'he-IL': ['Carmit']
-  };
-
-  const voices = synth.getVoices();
-  const names = preferred[lang] || [];
-  const baseLang = lang.split('-')[0];
-
-  // 1. Try preferred native voices
-  let best = voices.find(v => names.some(n => v.name.includes(n)));
-  // 2. For Spanish: try any female voice (es-ES or es-MX)
-  if (!best && baseLang === 'es') {
-    best = voices.find(v => v.lang.startsWith('es') && !v.name.toLowerCase().includes('compact') && (v.name.includes('a') || v.name.includes('Monica') || v.name.includes('Paulina')));
-    if (!best) best = voices.find(v => v.lang.startsWith('es') && !v.name.toLowerCase().includes('compact'));
-  }
-  // 3. Try any enhanced/premium voice for this language
-  if (!best) best = voices.find(v => v.lang === lang && !v.name.toLowerCase().includes('compact'));
-  // 4. Try any local voice for this language
-  if (!best) best = voices.find(v => v.lang === lang && v.localService);
-  // 5. Fallback: any voice matching base language
-  if (!best) best = voices.find(v => v.lang.startsWith(baseLang));
-
-  if (best) utter.voice = best;
-
   indicator.classList.add('visible');
   replayBtn.style.display = 'none';
 
-  utter.onend = () => {
+  currentAudio = new Audio(`audio/${lang}.mp3`);
+
+  currentAudio.onended = () => {
     indicator.classList.remove('visible');
     replayBtn.style.display = '';
   };
-  utter.onerror = () => {
+  currentAudio.onerror = () => {
     indicator.classList.remove('visible');
     replayBtn.style.display = '';
   };
 
-  synth.speak(utter);
+  currentAudio.play();
 }
 
 function replayLast() {
   if (lastLang) speak(lastLang);
 }
 
-// Preload voices
-if (synth.onvoiceschanged !== undefined) {
-  synth.onvoiceschanged = () => synth.getVoices();
-}
-synth.getVoices();
-
-// Rileva lingua al caricamento
 let autoLang = null;
 window.addEventListener('load', () => {
   const browserLang = navigator.language || navigator.userLanguage || 'en-GB';
@@ -441,7 +392,6 @@ window.addEventListener('load', () => {
   autoLang = Object.keys(messages).find(k => k.startsWith(langCode)) || null;
 });
 
-// Tocco su schermo → nascondi splash e avvia audio
 function startApp() {
   const splash = document.getElementById('splash');
   splash.classList.add('hide');
