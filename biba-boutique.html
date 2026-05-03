@@ -344,6 +344,9 @@ const messages = {
 let lastLang = null;
 let currentAudio = null;
 
+// Se servita dal server locale (IP o localhost) l'audio esce solo dal laptop
+const isLocalServer = !['github.io', 'github.com'].some(h => location.hostname.includes(h));
+
 function speak(lang) {
   if (currentAudio) {
     currentAudio.pause();
@@ -367,20 +370,33 @@ function speak(lang) {
   indicator.classList.add('visible');
   replayBtn.style.display = 'none';
 
-  fetch(`/play/${lang}`).catch(() => {});
-
-  currentAudio = new Audio(`audio/${lang}.mp3`);
-
-  currentAudio.onended = () => {
-    indicator.classList.remove('visible');
-    replayBtn.style.display = '';
-  };
-  currentAudio.onerror = () => {
-    indicator.classList.remove('visible');
-    replayBtn.style.display = '';
-  };
-
-  currentAudio.play();
+  if (isLocalServer) {
+    // Audio solo sul laptop — il tablet mostra solo il testo
+    fetch(`/play/${lang}`)
+      .then(r => r.json())
+      .then(data => {
+        setTimeout(() => {
+          indicator.classList.remove('visible');
+          replayBtn.style.display = '';
+        }, (data.duration || 14) * 1000);
+      })
+      .catch(() => {
+        indicator.classList.remove('visible');
+        replayBtn.style.display = '';
+      });
+  } else {
+    // GitHub Pages: audio sul dispositivo
+    currentAudio = new Audio(`audio/${lang}.mp3`);
+    currentAudio.onended = () => {
+      indicator.classList.remove('visible');
+      replayBtn.style.display = '';
+    };
+    currentAudio.onerror = () => {
+      indicator.classList.remove('visible');
+      replayBtn.style.display = '';
+    };
+    currentAudio.play();
+  }
 }
 
 function replayLast() {

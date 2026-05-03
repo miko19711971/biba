@@ -2,6 +2,7 @@ import os
 import socket
 import threading
 import pygame
+import mutagen.mp3
 from flask import Flask, send_from_directory, jsonify
 from flask_cors import CORS
 
@@ -47,7 +48,13 @@ def play_on_laptop(lang):
             pygame.mixer.music.play()
 
     threading.Thread(target=_play, daemon=True).start()
-    return jsonify({'ok': True, 'lang': lang})
+
+    try:
+        duration = mutagen.mp3.MP3(path).info.length
+    except Exception:
+        duration = 14
+
+    return jsonify({'ok': True, 'lang': lang, 'duration': round(duration, 1)})
 
 
 if __name__ == '__main__':
