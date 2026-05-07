@@ -361,7 +361,7 @@ const messages = {
 };
 
 const synth = window.speechSynthesis;
-let timers = [], currentLang = null;
+let timers = [], currentLang = null, autoBackTimer = null;
 
 // CJK languages: split into short chunks; others: split by space
 function getChunks(text, lang) {
@@ -423,6 +423,8 @@ function startMessage(lang) {
   utter.onend = () => {
     dots.classList.remove('on');
     triggerSequentialBlink();
+    if (autoBackTimer) clearTimeout(autoBackTimer);
+    autoBackTimer = setTimeout(goBack, 9000);
   };
   utter.onerror = () => dots.classList.remove('on');
 
@@ -485,6 +487,7 @@ function replayMsg() { if (currentLang) startMessage(currentLang); }
 function goBack() {
   synth.cancel();
   timers.forEach(clearTimeout);
+  if (autoBackTimer) { clearTimeout(autoBackTimer); autoBackTimer = null; }
   document.getElementById('screen2').classList.add('hidden');
   document.getElementById('screen1').classList.remove('hidden');
 }
