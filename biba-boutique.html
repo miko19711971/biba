@@ -391,6 +391,7 @@ function goMessage(lang) {
 
 function startMessage(lang) {
   timers.forEach(clearTimeout); timers = [];
+  if (autoBackTimer) { clearTimeout(autoBackTimer); autoBackTimer = null; }
   synth.cancel();
 
   const data = messages[lang];
@@ -420,13 +421,17 @@ function startMessage(lang) {
   const voice = voices.find(v => v.lang === lang) || voices.find(v => v.lang.startsWith(lang.split('-')[0]));
   if (voice) utter.voice = voice;
   dots.classList.add('on');
-  utter.onend = () => {
+  let speechDone = false;
+  function onSpeechEnd() {
+    if (speechDone) return;
+    speechDone = true;
     dots.classList.remove('on');
     triggerSequentialBlink();
     if (autoBackTimer) clearTimeout(autoBackTimer);
     autoBackTimer = setTimeout(goBack, 9000);
-  };
-  utter.onerror = () => dots.classList.remove('on');
+  }
+  utter.onend = onSpeechEnd;
+  utter.onerror = onSpeechEnd;
 
   // Use boundary events as primary; fallback timer activates only if no boundary fires
   let boundaryFired = false;
