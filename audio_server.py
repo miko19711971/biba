@@ -14,7 +14,8 @@ AUDIO_DIR = os.path.join(BASE_DIR, 'audio')
 
 VALID_LANGS = {
     'it-IT', 'en-GB', 'fr-FR', 'de-DE', 'es-ES', 'pt-PT',
-    'ru-RU', 'zh-CN', 'ja-JP', 'ko-KR', 'ar-SA', 'nl-NL', 'he-IL'
+    'ru-RU', 'zh-CN', 'ja-JP', 'ko-KR', 'ar-SA', 'nl-NL', 'he-IL',
+    'pl-PL', 'hr-HR', 'vi-VN', 'el-GR', 'tr-TR'
 }
 
 pygame.mixer.init()
@@ -30,6 +31,10 @@ def boutique():
 @app.route('/audio/<path:filename>')
 def audio_file(filename):
     return send_from_directory(AUDIO_DIR, filename)
+
+@app.route('/<path:filename>')
+def static_file(filename):
+    return send_from_directory(BASE_DIR, filename)
 
 
 @app.route('/play/<lang>')
