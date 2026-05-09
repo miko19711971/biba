@@ -19,7 +19,7 @@ VALID_LANGS = {
     'pl-PL', 'hr-HR', 'vi-VN', 'el-GR', 'tr-TR'
 }
 
-VOLUME_BOOST_DB = 1.58  # +20% ampiezza
+VOLUME_BOOST_DB = 3.17  # +44% ampiezza (+20% due volte)
 TMP_WAV = os.path.join(os.path.dirname(os.path.abspath(__file__)), '_boost.wav')
 
 pygame.mixer.init()
