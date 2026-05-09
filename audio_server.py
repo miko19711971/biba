@@ -1,4 +1,3 @@
-import io
 import os
 import socket
 import threading
@@ -21,6 +20,7 @@ VALID_LANGS = {
 }
 
 VOLUME_BOOST_DB = 1.58  # +20% ampiezza
+TMP_WAV = os.path.join(os.path.dirname(os.path.abspath(__file__)), '_boost.wav')
 
 pygame.mixer.init()
 _lock = threading.Lock()
@@ -53,11 +53,9 @@ def play_on_laptop(lang):
     def _play():
         with _lock:
             audio = AudioSegment.from_mp3(path) + VOLUME_BOOST_DB
-            buf = io.BytesIO()
-            audio.export(buf, format='wav')
-            buf.seek(0)
+            audio.export(TMP_WAV, format='wav')
             pygame.mixer.music.stop()
-            pygame.mixer.music.load(buf)
+            pygame.mixer.music.load(TMP_WAV)
             pygame.mixer.music.play()
 
     threading.Thread(target=_play, daemon=True).start()
