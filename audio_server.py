@@ -52,9 +52,13 @@ def play_on_laptop(lang):
 
     def _play():
         with _lock:
+            pygame.mixer.music.stop()
+            try:
+                pygame.mixer.music.unload()
+            except AttributeError:
+                pass
             audio = AudioSegment.from_mp3(path) + VOLUME_BOOST_DB
             audio.export(TMP_WAV, format='wav')
-            pygame.mixer.music.stop()
             pygame.mixer.music.load(TMP_WAV)
             pygame.mixer.music.play()
 
