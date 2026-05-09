@@ -1,8 +1,10 @@
+import io
 import os
 import socket
 import threading
 import pygame
 import mutagen.mp3
+from pydub import AudioSegment
 from flask import Flask, send_from_directory, jsonify
 from flask_cors import CORS
 
@@ -17,6 +19,8 @@ VALID_LANGS = {
     'ru-RU', 'zh-CN', 'ja-JP', 'ko-KR', 'ar-SA', 'nl-NL', 'he-IL',
     'pl-PL', 'hr-HR', 'vi-VN', 'el-GR', 'tr-TR'
 }
+
+VOLUME_BOOST_DB = 1.58  # +20% ampiezza
 
 pygame.mixer.init()
 _lock = threading.Lock()
@@ -48,8 +52,12 @@ def play_on_laptop(lang):
 
     def _play():
         with _lock:
+            audio = AudioSegment.from_mp3(path) + VOLUME_BOOST_DB
+            buf = io.BytesIO()
+            audio.export(buf, format='wav')
+            buf.seek(0)
             pygame.mixer.music.stop()
-            pygame.mixer.music.load(path)
+            pygame.mixer.music.load(buf)
             pygame.mixer.music.play()
 
     threading.Thread(target=_play, daemon=True).start()
