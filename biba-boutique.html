@@ -441,23 +441,6 @@
 </head>
 <body>
 
-<!-- ══════════ SCREEN 0 – Home (play button) ══════════ -->
-<div id="screen0">
-  <canvas id="s0canvas"></canvas>
-  <div class="s0-center">
-    <div class="s0-btn-wrap">
-      <div class="s0-halo"></div>
-      <div class="s0-halo"></div>
-      <div class="s0-halo"></div>
-      <div class="s0-btn" id="s0btn">
-        <div class="s0-triangle"></div>
-      </div>
-    </div>
-    <div class="s0-touch-text">TOUCH</div>
-    <div class="s0-arrow">▼</div>
-  </div>
-</div>
-
 <!-- ══════════ SCREEN 1 – selezione lingua ══════════ -->
 <div id="screen1" class="screen">
   <div class="container">
@@ -701,8 +684,7 @@ function goHome() {
   clearSeq();
   stopTypewriter('');
   document.getElementById('screen2').classList.add('hidden');
-  document.getElementById('screen1').classList.add('hidden');
-  document.getElementById('screen0').classList.remove('hidden');
+  document.getElementById('screen1').classList.remove('hidden');
   document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
 }
 
