@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Iconic Scarf Knots</title>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
 
@@ -11,10 +12,13 @@
     background: #060606;
     min-height: 100vh;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    padding: 32px 0 40px;
     font-family: 'Segoe UI', sans-serif;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
   }
 
   /* ── Outer wrapper — va in fullscreen ── */
@@ -203,6 +207,94 @@
     flex-shrink: 0;
   }
   #fs-btn:hover { background: rgba(255,255,255,0.1); color:#fff; border-color:rgba(255,255,255,0.35); }
+
+  /* ── Email section ── */
+  #email-section {
+    margin-top: 28px;
+    width: min(92vw, 860px);
+    background: linear-gradient(160deg, #111 0%, #0d0d0d 100%);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 16px;
+    padding: 28px 32px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.7);
+    text-align: center;
+  }
+
+  #email-section .tagline {
+    color: rgba(255,255,255,0.35);
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  #email-section h3 {
+    color: rgba(255,255,255,0.88);
+    font-size: 15px;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+    margin-bottom: 22px;
+  }
+
+  .email-row {
+    display: flex;
+    gap: 10px;
+    max-width: 420px;
+    margin: 0 auto;
+  }
+
+  #email-input {
+    flex: 1;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 10px;
+    padding: 12px 16px;
+    color: #fff;
+    font-size: 13px;
+    font-family: 'Segoe UI', sans-serif;
+    outline: none;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  #email-input::placeholder { color: rgba(255,255,255,0.25); }
+  #email-input:focus {
+    border-color: rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.08);
+  }
+
+  #send-btn {
+    background: rgba(255,255,255,0.92);
+    color: #0a0a0a;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 22px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  #send-btn:hover { background: #fff; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(255,255,255,0.15); }
+  #send-btn:active { transform: translateY(0); }
+  #send-btn:disabled { opacity: 0.45; cursor: default; transform: none; }
+
+  #email-status {
+    margin-top: 14px;
+    font-size: 12px;
+    min-height: 18px;
+    transition: opacity 0.3s;
+  }
+  #email-status.ok  { color: #7ecf9a; }
+  #email-status.err { color: #e07c7c; }
+
+  #email-section .privacy {
+    margin-top: 14px;
+    color: rgba(255,255,255,0.18);
+    font-size: 9.5px;
+    letter-spacing: 0.3px;
+  }
 </style>
 </head>
 <body>
@@ -237,6 +329,18 @@
     <button id="fs-btn">⛶</button>
   </div>
 
+</div>
+
+<!-- Email capture section -->
+<div id="email-section">
+  <div class="tagline">Iconic Scarf Knots</div>
+  <h3>Ricevi il link del video su tutti i tuoi dispositivi</h3>
+  <div class="email-row">
+    <input type="email" id="email-input" placeholder="La tua email...">
+    <button id="send-btn">Invia Link</button>
+  </div>
+  <div id="email-status"></div>
+  <div class="privacy">Nessuno spam. Solo il link che hai richiesto.</div>
 </div>
 
 <script>
@@ -351,6 +455,49 @@ document.addEventListener('keydown', e => {
   if (e.code === 'ArrowLeft')  vid.currentTime = Math.max(0, vid.currentTime - 5);
   if (e.code === 'ArrowRight') vid.currentTime = Math.min(vid.duration, vid.currentTime + 5);
 });
+
+// ── EmailJS — email capture ──────────────────────────────────────────
+(function(){
+  emailjs.init('YOUR_PUBLIC_KEY');  // ← sostituisci con la tua Public Key
+
+  const emailInput = document.getElementById('email-input');
+  const sendBtn    = document.getElementById('send-btn');
+  const statusEl   = document.getElementById('email-status');
+
+  const VIDEO_LINK = 'https://miko19711971.github.io/biba/scarf_player.html';
+
+  sendBtn.addEventListener('click', () => {
+    const email = emailInput.value.trim();
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      statusEl.textContent = 'Inserisci un indirizzo email valido.';
+      statusEl.className = 'err';
+      return;
+    }
+    sendBtn.disabled = true;
+    statusEl.textContent = 'Invio in corso…';
+    statusEl.className = '';
+
+    emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', {
+      to_email: email,
+      video_link: VIDEO_LINK,
+    })
+    .then(() => {
+      statusEl.textContent = 'Link inviato! Controlla la tua casella email.';
+      statusEl.className = 'ok';
+      emailInput.value = '';
+      sendBtn.disabled = false;
+    })
+    .catch(() => {
+      statusEl.textContent = 'Invio fallito. Riprova tra qualche secondo.';
+      statusEl.className = 'err';
+      sendBtn.disabled = false;
+    });
+  });
+
+  emailInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') sendBtn.click();
+  });
+})();
 </script>
 </body>
 </html>
