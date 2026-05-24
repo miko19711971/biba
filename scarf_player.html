@@ -600,7 +600,7 @@ document.addEventListener('keydown', e => {
     statusEl.className = '';
 
     emailjs.send('service_947xfpv', 'template_8t3hvg7', {
-      email:      email,
+      to_email:   email,
       video_link: VIDEO_LINK,
     })
     .then(() => {
@@ -613,7 +613,7 @@ document.addEventListener('keydown', e => {
       sendBtn.disabled = false;
     })
     .catch((err) => {
-      statusEl.textContent = 'Error: ' + JSON.stringify(err);
+      statusEl.textContent = 'Something went wrong. Please try again.';
       statusEl.className = 'err';
       sendBtn.disabled = false;
     });
