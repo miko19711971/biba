@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Iconic Scarf Knots</title>
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
 
@@ -295,6 +294,34 @@
     font-size: 9.5px;
     letter-spacing: 0.3px;
   }
+
+  #link-reveal {
+    display: none;
+    margin-top: 18px;
+    padding: 14px 20px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    max-width: 420px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  #link-reveal p {
+    color: rgba(255,255,255,0.45);
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  #link-reveal a {
+    color: rgba(255,255,255,0.85);
+    font-size: 12px;
+    word-break: break-all;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+    transition: color 0.15s, border-color 0.15s;
+  }
+  #link-reveal a:hover { color: #fff; border-color: rgba(255,255,255,0.5); }
 </style>
 </head>
 <body>
@@ -340,6 +367,10 @@
     <button id="send-btn">Invia Link</button>
   </div>
   <div id="email-status"></div>
+  <div id="link-reveal">
+    <p>Il tuo link</p>
+    <a id="link-anchor" href="#" target="_blank"></a>
+  </div>
   <div class="privacy">Nessuno spam. Solo il link che hai richiesto.</div>
 </div>
 
@@ -456,15 +487,16 @@ document.addEventListener('keydown', e => {
   if (e.code === 'ArrowRight') vid.currentTime = Math.min(vid.duration, vid.currentTime + 5);
 });
 
-// ── EmailJS — email capture ──────────────────────────────────────────
+// ── Web3Forms — email capture ────────────────────────────────────────
 (function(){
-  emailjs.init('YOUR_PUBLIC_KEY');  // ← sostituisci con la tua Public Key
+  const emailInput  = document.getElementById('email-input');
+  const sendBtn     = document.getElementById('send-btn');
+  const statusEl    = document.getElementById('email-status');
+  const linkReveal  = document.getElementById('link-reveal');
+  const linkAnchor  = document.getElementById('link-anchor');
 
-  const emailInput = document.getElementById('email-input');
-  const sendBtn    = document.getElementById('send-btn');
-  const statusEl   = document.getElementById('email-status');
-
-  const VIDEO_LINK = 'https://miko19711971.github.io/biba/scarf_player.html';
+  const VIDEO_LINK   = 'https://miko19711971.github.io/biba/scarf_player.html';
+  const ACCESS_KEY   = '788923';
 
   sendBtn.addEventListener('click', () => {
     const email = emailInput.value.trim();
@@ -477,14 +509,29 @@ document.addEventListener('keydown', e => {
     statusEl.textContent = 'Invio in corso…';
     statusEl.className = '';
 
-    emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', {
-      to_email: email,
-      video_link: VIDEO_LINK,
+    fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        access_key: ACCESS_KEY,
+        subject: 'Nuovo contatto – Iconic Scarf Knots',
+        from_name: 'Scarf Player',
+        replyto: email,
+        message: 'Email cliente: ' + email + '\n\nLink video: ' + VIDEO_LINK,
+      })
     })
-    .then(() => {
-      statusEl.textContent = 'Link inviato! Controlla la tua casella email.';
-      statusEl.className = 'ok';
-      emailInput.value = '';
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        statusEl.textContent = 'Perfetto! Ecco il tuo link personale:';
+        statusEl.className = 'ok';
+        linkAnchor.href = VIDEO_LINK;
+        linkAnchor.textContent = VIDEO_LINK;
+        linkReveal.style.display = 'block';
+        emailInput.value = '';
+      } else {
+        throw new Error(data.message || 'Errore');
+      }
       sendBtn.disabled = false;
     })
     .catch(() => {
