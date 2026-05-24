@@ -323,6 +323,61 @@
     transition: color 0.15s, border-color 0.15s;
   }
   #link-reveal a:hover { color: #fff; border-color: rgba(255,255,255,0.5); }
+
+  /* ── Paywall overlay ── */
+  #paywall {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.92);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 30;
+    text-align: center;
+    padding: 28px 24px;
+  }
+  #paywall.show { display: flex; }
+
+  #paywall .lock {
+    font-size: 36px;
+    margin-bottom: 16px;
+    opacity: 0.9;
+  }
+
+  #paywall h2 {
+    color: #fff;
+    font-size: 16px;
+    font-weight: 400;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  #paywall p {
+    color: rgba(255,255,255,0.5);
+    font-size: 12px;
+    line-height: 1.7;
+    max-width: 280px;
+    margin-bottom: 22px;
+  }
+
+  #paywall-btn {
+    background: rgba(255,255,255,0.92);
+    color: #0a0a0a;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 28px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  #paywall-btn:hover { background: #fff; transform: translateY(-1px); }
 </style>
 </head>
 <body>
@@ -332,6 +387,16 @@
   <video id="vid" playsinline>
     <source src="VIDEO_PREMIUM_SYNC_FIXED.mp4" type="video/mp4">
   </video>
+
+  <!-- Paywall overlay -->
+  <div id="paywall">
+    <div class="lock">🔒</div>
+    <h2>Preview Ended</h2>
+    <p>Enter your email below to receive your personal link and watch the full video anytime, on any device.</p>
+    <button id="paywall-btn" onclick="document.getElementById('email-section').scrollIntoView({behavior:'smooth'})">
+      Get My Link
+    </button>
+  </div>
 
   <!-- Play/pause feedback al centro -->
   <div id="play-overlay">▶</div>
@@ -376,6 +441,29 @@
 </div>
 
 <script>
+// ── Access control ───────────────────────────────────────────────────
+const ACCESS_TOKEN = 'BibaBoutiqueRome2024';
+const urlParams    = new URLSearchParams(window.location.search);
+if (urlParams.get('access') === ACCESS_TOKEN) {
+  localStorage.setItem('biba_access', ACCESS_TOKEN);
+}
+const fullAccess = localStorage.getItem('biba_access') === ACCESS_TOKEN;
+
+if (!fullAccess) {
+  // Start 10-minute preview countdown
+  const expireAt = Date.now() + 10 * 60 * 1000;
+  const previewTimer = setInterval(() => {
+    if (Date.now() >= expireAt) {
+      clearInterval(previewTimer);
+      document.getElementById('vid').pause();
+      document.getElementById('paywall').classList.add('show');
+      setTimeout(() => {
+        document.getElementById('email-section').scrollIntoView({ behavior: 'smooth' });
+      }, 800);
+    }
+  }, 1000);
+}
+
 const vid          = document.getElementById('vid');
 const player       = document.getElementById('player');
 const playBtn      = document.getElementById('play-btn');
@@ -498,7 +586,7 @@ document.addEventListener('keydown', e => {
   const linkReveal = document.getElementById('link-reveal');
   const linkAnchor = document.getElementById('link-anchor');
 
-  const VIDEO_LINK = 'https://miko19711971.github.io/biba/scarf_player.html';
+  const VIDEO_LINK = 'https://miko19711971.github.io/biba/scarf_player.html?access=BibaBoutiqueRome2024';
 
   sendBtn.addEventListener('click', () => {
     const email = emailInput.value.trim();
