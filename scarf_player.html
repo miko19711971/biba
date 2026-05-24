@@ -612,8 +612,8 @@ document.addEventListener('keydown', e => {
       emailInput.value = '';
       sendBtn.disabled = false;
     })
-    .catch(() => {
-      statusEl.textContent = 'Something went wrong. Please try again.';
+    .catch((err) => {
+      statusEl.textContent = 'Error: ' + JSON.stringify(err);
       statusEl.className = 'err';
       sendBtn.disabled = false;
     });
