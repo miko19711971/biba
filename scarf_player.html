@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Iconic Scarf Knots</title>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
 
@@ -487,55 +488,44 @@ document.addEventListener('keydown', e => {
   if (e.code === 'ArrowRight') vid.currentTime = Math.min(vid.duration, vid.currentTime + 5);
 });
 
-// ── Web3Forms — email capture ────────────────────────────────────────
+// ── EmailJS — email capture ──────────────────────────────────────────
 (function(){
-  const emailInput  = document.getElementById('email-input');
-  const sendBtn     = document.getElementById('send-btn');
-  const statusEl    = document.getElementById('email-status');
-  const linkReveal  = document.getElementById('link-reveal');
-  const linkAnchor  = document.getElementById('link-anchor');
+  emailjs.init('bknKtj-An57LETGGD');
 
-  const VIDEO_LINK   = 'https://miko19711971.github.io/biba/scarf_player.html';
-  const ACCESS_KEY   = '788923';
+  const emailInput = document.getElementById('email-input');
+  const sendBtn    = document.getElementById('send-btn');
+  const statusEl   = document.getElementById('email-status');
+  const linkReveal = document.getElementById('link-reveal');
+  const linkAnchor = document.getElementById('link-anchor');
+
+  const VIDEO_LINK = 'https://miko19711971.github.io/biba/scarf_player.html';
 
   sendBtn.addEventListener('click', () => {
     const email = emailInput.value.trim();
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      statusEl.textContent = 'Inserisci un indirizzo email valido.';
+      statusEl.textContent = 'Please enter a valid email address.';
       statusEl.className = 'err';
       return;
     }
     sendBtn.disabled = true;
-    statusEl.textContent = 'Invio in corso…';
+    statusEl.textContent = 'Sending…';
     statusEl.className = '';
 
-    fetch('https://api.web3forms.com/submit', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        access_key: ACCESS_KEY,
-        subject: 'Nuovo contatto – Iconic Scarf Knots',
-        from_name: 'Scarf Player',
-        replyto: email,
-        message: 'Email cliente: ' + email + '\n\nLink video: ' + VIDEO_LINK,
-      })
+    emailjs.send('service_947xfpv', 'template_8t3hvg7', {
+      to_email:   email,
+      video_link: VIDEO_LINK,
     })
-    .then(r => r.json())
-    .then(data => {
-      if (data.success) {
-        statusEl.textContent = 'Perfetto! Ecco il tuo link personale:';
-        statusEl.className = 'ok';
-        linkAnchor.href = VIDEO_LINK;
-        linkAnchor.textContent = VIDEO_LINK;
-        linkReveal.style.display = 'block';
-        emailInput.value = '';
-      } else {
-        throw new Error(data.message || 'Errore');
-      }
+    .then(() => {
+      statusEl.textContent = 'Check your inbox — the link is on its way!';
+      statusEl.className = 'ok';
+      linkAnchor.href = VIDEO_LINK;
+      linkAnchor.textContent = VIDEO_LINK;
+      linkReveal.style.display = 'block';
+      emailInput.value = '';
       sendBtn.disabled = false;
     })
     .catch(() => {
-      statusEl.textContent = 'Invio fallito. Riprova tra qualche secondo.';
+      statusEl.textContent = 'Something went wrong. Please try again.';
       statusEl.className = 'err';
       sendBtn.disabled = false;
     });
