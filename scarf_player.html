@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Iconic Scarf Knots</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: #060606;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Segoe UI', sans-serif;
+    overflow: hidden;
+  }
+
+  /* ── Outer wrapper — va in fullscreen ── */
+  #player {
+    position: relative;
+    width: min(92vw, 860px);
+    background: #000;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,0.07),
+      0 30px 80px rgba(0,0,0,0.95);
+  }
+  #player:-webkit-full-screen { width:100%; max-width:100%; border-radius:0; }
+  #player:fullscreen           { width:100%; max-width:100%; border-radius:0; }
+
+  /* ── Video — NO controlli nativi ── */
+  video {
+    width: 100%;
+    display: block;
+    background: #000;
+    cursor: pointer;
+  }
+
+  /* ── Replay overlay button ── */
+  #replay-btn {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 52px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    padding: 20px 0;
+    background: rgba(10,10,10,0.70);
+    border: 1px solid rgba(255,255,255,0.16);
+    border-radius: 28px;
+    cursor: pointer;
+    color: #c8c8c8;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transition: all 0.22s ease;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+    z-index: 10;
+    user-select: none;
+  }
+  #replay-btn:hover {
+    background: rgba(255,255,255,0.13);
+    border-color: rgba(255,255,255,0.35);
+    color: #fff;
+    transform: translateY(calc(-50% - 3px));
+  }
+  #replay-btn:active { transform: translateY(-50%); }
+  #replay-btn svg { width:22px; height:22px; fill:currentColor; }
+  #replay-btn .btn-label {
+    font-size: 7.5px;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    color: rgba(255,255,255,0.35);
+    white-space: nowrap;
+    transition: color 0.2s;
+  }
+  #replay-btn:hover .btn-label { color: rgba(255,255,255,0.65); }
+
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(-360deg); }
+  }
+  .spinning { animation: spin 0.42s cubic-bezier(.4,0,.2,1) forwards; }
+
+  /* ── Play/pause overlay (centro) ── */
+  #play-overlay {
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    width: 64px; height: 64px;
+    background: rgba(0,0,0,0.55);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff;
+    font-size: 28px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s;
+    z-index: 9;
+  }
+  #play-overlay.show { opacity: 1; }
+
+  /* ── Barra controlli custom ── */
+  #controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 14px;
+    background: #0d0d0d;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  /* Play/pause button */
+  #play-btn {
+    background: none;
+    border: none;
+    color: #ccc;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 6px;
+    transition: color 0.15s, background 0.15s;
+    flex-shrink: 0;
+    line-height: 1;
+  }
+  #play-btn:hover { color: #fff; background: rgba(255,255,255,0.08); }
+
+  /* Knot name */
+  #knot-name {
+    flex: 1;
+    color: rgba(255,255,255,0.85);
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    min-width: 0;
+  }
+
+  /* Progress bar */
+  #progress-wrap {
+    flex: 2;
+    height: 4px;
+    background: rgba(255,255,255,0.12);
+    border-radius: 4px;
+    cursor: pointer;
+    position: relative;
+    flex-shrink: 0;
+  }
+  #progress-fill {
+    height: 100%;
+    background: rgba(255,255,255,0.7);
+    border-radius: 4px;
+    width: 0%;
+    pointer-events: none;
+    transition: width 0.1s linear;
+  }
+  #progress-wrap:hover #progress-fill { background: #fff; }
+
+  /* Time */
+  #time {
+    color: rgba(255,255,255,0.4);
+    font-size: 10px;
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  /* Volume */
+  #vol-btn {
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.5);
+    font-size: 15px;
+    cursor: pointer;
+    padding: 2px 4px;
+    border-radius: 5px;
+    transition: color 0.15s;
+    flex-shrink: 0;
+  }
+  #vol-btn:hover { color: #fff; }
+
+  /* Fullscreen */
+  #fs-btn {
+    background: none;
+    border: 1px solid rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.55);
+    border-radius: 6px;
+    padding: 3px 8px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+  #fs-btn:hover { background: rgba(255,255,255,0.1); color:#fff; border-color:rgba(255,255,255,0.35); }
+</style>
+</head>
+<body>
+
+<div id="player">
+
+  <video id="vid" playsinline>
+    <source src="VIDEO_PREMIUM_SYNC_FIXED.mp4" type="video/mp4">
+  </video>
+
+  <!-- Play/pause feedback al centro -->
+  <div id="play-overlay">▶</div>
+
+  <!-- Replay capsule -->
+  <button id="replay-btn" title="Replay this knot">
+    <svg id="ri" viewBox="0 0 24 24">
+      <path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6
+               -6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/>
+    </svg>
+    <span class="btn-label">Replay</span>
+  </button>
+
+  <!-- Barra controlli -->
+  <div id="controls">
+    <button id="play-btn">▶</button>
+    <div id="knot-name">—</div>
+    <div id="progress-wrap">
+      <div id="progress-fill"></div>
+    </div>
+    <div id="time">0:00</div>
+    <button id="vol-btn">🔊</button>
+    <button id="fs-btn">⛶</button>
+  </div>
+
+</div>
+
+<script>
+const vid          = document.getElementById('vid');
+const player       = document.getElementById('player');
+const playBtn      = document.getElementById('play-btn');
+const playOverlay  = document.getElementById('play-overlay');
+const knotName     = document.getElementById('knot-name');
+const progressWrap = document.getElementById('progress-wrap');
+const progressFill = document.getElementById('progress-fill');
+const timeEl       = document.getElementById('time');
+const volBtn       = document.getElementById('vol-btn');
+const fsBtn        = document.getElementById('fs-btn');
+const replayBtn    = document.getElementById('replay-btn');
+const ri           = document.getElementById('ri');
+
+// ── Knot segments (SLOW = 1.25) ─────────────────────────────────────
+const KNOTS = [
+  { name: "Diana Drop",      start:   0,      end:  11.875 },
+  { name: "Gong Li Knot",   start:  11.875,  end:  25.938 },
+  { name: "Grace Tie",      start:  25.938,  end:  36.875 },
+  { name: "Chanel Square",  start:  36.875,  end:  62.5   },
+  { name: "Penelope Knot",  start:  62.5,    end:  78.125 },
+  { name: "Pavlova Petal",  start:  78.125,  end:  93.75  },
+  { name: "Gal Elegance",   start:  93.75,   end: 106.25  },
+  { name: "Jennie Necklace",start: 106.25,   end: 125.0   },
+];
+
+function getCurrentKnot() {
+  const t = vid.currentTime;
+  return KNOTS.find(k => t >= k.start && t < k.end) ?? KNOTS[KNOTS.length-1];
+}
+
+function fmt(s) {
+  const m = Math.floor(s/60), ss = Math.floor(s%60);
+  return `${m}:${ss.toString().padStart(2,'0')}`;
+}
+
+// ── Aggiornamento continuo ───────────────────────────────────────────
+let lastKnot = null;
+vid.addEventListener('timeupdate', () => {
+  const k = getCurrentKnot();
+  if (k !== lastKnot) {
+    knotName.textContent = k.name.toUpperCase();
+    lastKnot = k;
+  }
+  if (vid.duration) {
+    progressFill.style.width = (vid.currentTime / vid.duration * 100) + '%';
+    timeEl.textContent = fmt(vid.currentTime) + ' / ' + fmt(vid.duration);
+  }
+});
+
+// ── Play / Pause ─────────────────────────────────────────────────────
+function togglePlay() {
+  if (vid.paused) { vid.play(); }
+  else            { vid.pause(); }
+}
+
+vid.addEventListener('click', togglePlay);
+playBtn.addEventListener('click', togglePlay);
+
+function flashOverlay(icon) {
+  playOverlay.textContent = icon;
+  playOverlay.classList.add('show');
+  setTimeout(() => playOverlay.classList.remove('show'), 500);
+}
+
+vid.addEventListener('play',  () => { playBtn.textContent = '⏸'; flashOverlay('▶'); });
+vid.addEventListener('pause', () => { playBtn.textContent = '▶'; flashOverlay('⏸'); });
+vid.addEventListener('ended', () => { playBtn.textContent = '▶'; });
+
+// ── Progress bar click ───────────────────────────────────────────────
+progressWrap.addEventListener('click', e => {
+  const r = progressWrap.getBoundingClientRect();
+  vid.currentTime = (e.clientX - r.left) / r.width * vid.duration;
+});
+
+// ── Volume mute toggle ───────────────────────────────────────────────
+volBtn.addEventListener('click', () => {
+  vid.muted = !vid.muted;
+  volBtn.textContent = vid.muted ? '🔇' : '🔊';
+});
+
+// ── Replay button ────────────────────────────────────────────────────
+replayBtn.addEventListener('click', () => {
+  const k = getCurrentKnot();
+  vid.currentTime = k.start;
+  if (vid.paused) vid.play();
+  ri.classList.remove('spinning');
+  void ri.offsetWidth;
+  ri.classList.add('spinning');
+  ri.addEventListener('animationend', () => ri.classList.remove('spinning'), { once: true });
+});
+
+// ── Fullscreen ───────────────────────────────────────────────────────
+fsBtn.addEventListener('click', () => {
+  if (!document.fullscreenElement) {
+    player.requestFullscreen().catch(() => vid.requestFullscreen());
+    fsBtn.textContent = '✕';
+  } else {
+    document.exitFullscreen();
+    fsBtn.textContent = '⛶';
+  }
+});
+document.addEventListener('fullscreenchange', () => {
+  if (!document.fullscreenElement) fsBtn.textContent = '⛶';
+});
+
+// ── Keyboard shortcuts ───────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if (e.code === 'Space') { e.preventDefault(); togglePlay(); }
+  if (e.code === 'ArrowLeft')  vid.currentTime = Math.max(0, vid.currentTime - 5);
+  if (e.code === 'ArrowRight') vid.currentTime = Math.min(vid.duration, vid.currentTime + 5);
+});
+</script>
+</body>
+</html>
