@@ -512,7 +512,7 @@ document.addEventListener('keydown', e => {
     statusEl.className = '';
 
     emailjs.send('service_947xfpv', 'template_8t3hvg7', {
-      to_email:   email,
+      email:      email,
       video_link: VIDEO_LINK,
     })
     .then(() => {
