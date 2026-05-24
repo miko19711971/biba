@@ -477,16 +477,16 @@ const fsBtn        = document.getElementById('fs-btn');
 const replayBtn    = document.getElementById('replay-btn');
 const ri           = document.getElementById('ri');
 
-// ── Knot segments (SLOW = 1.25) ─────────────────────────────────────
+// ── Knot segments ────────────────────────────────────────────────────
 const KNOTS = [
-  { name: "Diana Drop",      start:   0,      end:  11.875 },
-  { name: "Gong Li Knot",   start:  11.875,  end:  25.938 },
-  { name: "Grace Tie",      start:  25.938,  end:  36.875 },
-  { name: "Chanel Square",  start:  36.875,  end:  62.5   },
-  { name: "Penelope Knot",  start:  62.5,    end:  78.125 },
-  { name: "Pavlova Petal",  start:  78.125,  end:  93.75  },
-  { name: "Gal Elegance",   start:  93.75,   end: 106.25  },
-  { name: "Jennie Necklace",start: 106.25,   end: 125.0   },
+  { name: "Diana Drop",      start:  0,     end:  9.5   },
+  { name: "Gong Li Knot",   start:  9.5,   end: 20.75  },
+  { name: "Grace Tie",      start: 20.75,  end: 29.5   },
+  { name: "Chanel Square",  start: 29.5,   end: 50.0   },
+  { name: "Penelope Knot",  start: 50.0,   end: 62.5   },
+  { name: "Pavlova Petal",  start: 62.5,   end: 75.0   },
+  { name: "Gal Elegance",   start: 75.0,   end: 85.0   },
+  { name: "Jennie Necklace",start: 85.0,   end: 99.938 },
 ];
 
 function getCurrentKnot() {
