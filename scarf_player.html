@@ -384,7 +384,7 @@
 
 <div id="player">
 
-  <video id="vid" playsinline>
+  <video id="vid" playsinline loop autoplay muted>
     <source src="VIDEO_PREMIUM_SYNC_FIXED.mp4" type="video/mp4">
   </video>
 
@@ -466,6 +466,16 @@ if (!fullAccess) {
 
 const vid          = document.getElementById('vid');
 vid.playbackRate   = 0.75;
+
+// Unmute on first user interaction (browsers require muted for autoplay)
+function firstUnmute() {
+  vid.muted = false;
+  volBtn.textContent = '🔊';
+  document.removeEventListener('click', firstUnmute);
+  document.removeEventListener('touchstart', firstUnmute);
+}
+document.addEventListener('click', firstUnmute);
+document.addEventListener('touchstart', firstUnmute);
 const player       = document.getElementById('player');
 const playBtn      = document.getElementById('play-btn');
 const playOverlay  = document.getElementById('play-overlay');
