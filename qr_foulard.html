@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Biba · Foulard Video</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #1a1a1a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      font-family: 'Georgia', serif;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 4px;
+      padding: 48px 40px;
+      text-align: center;
+      max-width: 340px;
+      width: 90%;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    }
+
+    .brand {
+      font-size: 13px;
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      color: #999;
+      margin-bottom: 6px;
+    }
+
+    .title {
+      font-size: 26px;
+      color: #1a1a1a;
+      font-weight: normal;
+      margin-bottom: 4px;
+      font-style: italic;
+    }
+
+    .subtitle {
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #bbb;
+      margin-bottom: 36px;
+    }
+
+    #qrcode {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 32px;
+    }
+
+    #qrcode canvas,
+    #qrcode img {
+      border: 1px solid #eee;
+      padding: 12px;
+      border-radius: 2px;
+    }
+
+    .divider {
+      width: 40px;
+      height: 1px;
+      background: #ddd;
+      margin: 0 auto 20px;
+    }
+
+    .instruction {
+      font-size: 12px;
+      letter-spacing: 1px;
+      color: #888;
+      line-height: 1.8;
+      text-transform: uppercase;
+    }
+
+    .location {
+      margin-top: 28px;
+      font-size: 11px;
+      letter-spacing: 2px;
+      color: #ccc;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <p class="brand">Biba Boutique</p>
+    <h1 class="title">Iconic Scarf Knots</h1>
+    <p class="subtitle">Tutorial esclusivo</p>
+
+    <div id="qrcode"></div>
+
+    <div class="divider"></div>
+    <p class="instruction">Inquadra con la fotocamera<br>per guardare il video</p>
+    <p class="location">Roma · Via delle Muratte 88</p>
+  </div>
+
+  <script>
+    new QRCode(document.getElementById("qrcode"), {
+      text: "https://miko19711971.github.io/biba/scarf_player.html?access=BibaBoutiqueRome2024",
+      width: 220,
+      height: 220,
+      colorDark: "#1a1a1a",
+      colorLight: "#ffffff",
+      correctLevel: QRCode.CorrectLevel.H
+    });
+  </script>
+</body>
+</html>
