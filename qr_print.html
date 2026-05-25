@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Biba · Scarf Knots QR Print</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #f0f0f0;
+      font-family: 'Georgia', serif;
+      padding: 20px;
+    }
+
+    .page {
+      background: #fff;
+      width: 210mm;
+      min-height: 297mm;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      gap: 0;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    }
+
+    .card {
+      border: 1px solid #e8e8e8;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 24px;
+      text-align: center;
+      gap: 0;
+    }
+
+    .brand {
+      font-size: 10px;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: #aaa;
+      margin-bottom: 6px;
+    }
+
+    .title {
+      font-size: 22px;
+      color: #1a1a1a;
+      font-weight: normal;
+      font-style: italic;
+      margin-bottom: 3px;
+    }
+
+    .subtitle {
+      font-size: 9px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #bbb;
+      margin-bottom: 24px;
+    }
+
+    .qr {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .qr canvas,
+    .qr img {
+      border: 1px solid #e0e0e0;
+      padding: 10px;
+    }
+
+    .divider {
+      width: 32px;
+      height: 1px;
+      background: #ddd;
+      margin: 0 auto 14px;
+    }
+
+    .instruction {
+      font-size: 10px;
+      letter-spacing: 1px;
+      color: #888;
+      line-height: 1.9;
+      text-transform: uppercase;
+    }
+
+    .location {
+      margin-top: 18px;
+      font-size: 9px;
+      letter-spacing: 2px;
+      color: #ccc;
+      text-transform: uppercase;
+    }
+
+    @media print {
+      body {
+        background: none;
+        padding: 0;
+      }
+      .page {
+        box-shadow: none;
+        width: 100%;
+        min-height: 100vh;
+        page-break-after: always;
+      }
+      .card {
+        border: 0.5px solid #ddd;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="card">
+      <p class="brand">Biba Boutique</p>
+      <h1 class="title">Iconic Scarf Knots</h1>
+      <p class="subtitle">Exclusive Tutorial</p>
+      <div class="qr" id="qr1"></div>
+      <div class="divider"></div>
+      <p class="instruction">Scan with your camera<br>to watch the video</p>
+      <p class="location">Rome · Via delle Muratte 88</p>
+    </div>
+    <div class="card">
+      <p class="brand">Biba Boutique</p>
+      <h1 class="title">Iconic Scarf Knots</h1>
+      <p class="subtitle">Exclusive Tutorial</p>
+      <div class="qr" id="qr2"></div>
+      <div class="divider"></div>
+      <p class="instruction">Scan with your camera<br>to watch the video</p>
+      <p class="location">Rome · Via delle Muratte 88</p>
+    </div>
+    <div class="card">
+      <p class="brand">Biba Boutique</p>
+      <h1 class="title">Iconic Scarf Knots</h1>
+      <p class="subtitle">Exclusive Tutorial</p>
+      <div class="qr" id="qr3"></div>
+      <div class="divider"></div>
+      <p class="instruction">Scan with your camera<br>to watch the video</p>
+      <p class="location">Rome · Via delle Muratte 88</p>
+    </div>
+    <div class="card">
+      <p class="brand">Biba Boutique</p>
+      <h1 class="title">Iconic Scarf Knots</h1>
+      <p class="subtitle">Exclusive Tutorial</p>
+      <div class="qr" id="qr4"></div>
+      <div class="divider"></div>
+      <p class="instruction">Scan with your camera<br>to watch the video</p>
+      <p class="location">Rome · Via delle Muratte 88</p>
+    </div>
+  </div>
+
+  <script>
+    const url = "https://miko19711971.github.io/biba/scarf_player.html?access=BibaBoutiqueRome2024";
+    const opts = {
+      text: url,
+      width: 180,
+      height: 180,
+      colorDark: "#1a1a1a",
+      colorLight: "#ffffff",
+      correctLevel: QRCode.CorrectLevel.H
+    };
+    ["qr1","qr2","qr3","qr4"].forEach(id => new QRCode(document.getElementById(id), opts));
+  </script>
+</body>
+</html>
