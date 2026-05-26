@@ -387,6 +387,7 @@
   <video id="vid" playsinline loop autoplay muted>
     <source src="VIDEO_PREMIUM_SYNC_FIXED.mp4" type="video/mp4">
   </video>
+  <audio id="aud" src="VIDEO_PREMIUM_SYNC_FIXED.mp4" loop preload="none"></audio>
 
   <!-- Paywall overlay -->
   <div id="paywall">
@@ -456,6 +457,7 @@ if (!fullAccess) {
     if (Date.now() >= expireAt) {
       clearInterval(previewTimer);
       document.getElementById('vid').pause();
+      document.getElementById('aud').pause();
       document.getElementById('paywall').classList.add('show');
       setTimeout(() => {
         document.getElementById('email-section').scrollIntoView({ behavior: 'smooth' });
@@ -467,15 +469,19 @@ if (!fullAccess) {
 const vid          = document.getElementById('vid');
 vid.playbackRate   = 0.5;
 
-// Unmute on first user interaction (browsers require muted for autoplay)
-function firstUnmute() {
-  vid.muted = false;
-  volBtn.textContent = '🔊';
-  document.removeEventListener('click', firstUnmute);
-  document.removeEventListener('touchstart', firstUnmute);
+const aud          = document.getElementById('aud');
+aud.muted          = false;
+
+// Start audio on first user interaction (autoplay policy requires gesture)
+function firstAudioStart() {
+  aud.currentTime = vid.currentTime;
+  if (!vid.paused) aud.play().catch(() => {});
+  document.removeEventListener('click', firstAudioStart);
+  document.removeEventListener('touchstart', firstAudioStart);
 }
-document.addEventListener('click', firstUnmute);
-document.addEventListener('touchstart', firstUnmute);
+document.addEventListener('click', firstAudioStart);
+document.addEventListener('touchstart', firstAudioStart);
+
 const player       = document.getElementById('player');
 const playBtn      = document.getElementById('play-btn');
 const playOverlay  = document.getElementById('play-overlay');
@@ -539,26 +545,29 @@ function flashOverlay(icon) {
   setTimeout(() => playOverlay.classList.remove('show'), 500);
 }
 
-vid.addEventListener('play',  () => { playBtn.textContent = '⏸'; flashOverlay('▶'); });
-vid.addEventListener('pause', () => { playBtn.textContent = '▶'; flashOverlay('⏸'); });
-vid.addEventListener('ended', () => { playBtn.textContent = '▶'; });
+vid.addEventListener('play',  () => { playBtn.textContent = '⏸'; flashOverlay('▶'); aud.play().catch(() => {}); });
+vid.addEventListener('pause', () => { playBtn.textContent = '▶'; flashOverlay('⏸'); aud.pause(); });
+vid.addEventListener('ended', () => { playBtn.textContent = '▶'; aud.pause(); });
 
 // ── Progress bar click ───────────────────────────────────────────────
 progressWrap.addEventListener('click', e => {
   const r = progressWrap.getBoundingClientRect();
-  vid.currentTime = (e.clientX - r.left) / r.width * vid.duration;
+  const t = (e.clientX - r.left) / r.width * vid.duration;
+  vid.currentTime = t;
+  aud.currentTime = t;
 });
 
 // ── Volume mute toggle ───────────────────────────────────────────────
 volBtn.addEventListener('click', () => {
-  vid.muted = !vid.muted;
-  volBtn.textContent = vid.muted ? '🔇' : '🔊';
+  aud.muted = !aud.muted;
+  volBtn.textContent = aud.muted ? '🔇' : '🔊';
 });
 
 // ── Replay button ────────────────────────────────────────────────────
 replayBtn.addEventListener('click', () => {
   const k = getCurrentKnot();
   vid.currentTime = k.start;
+  aud.currentTime = k.start;
   if (vid.paused) vid.play();
   ri.classList.remove('spinning');
   void ri.offsetWidth;
