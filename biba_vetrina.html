@@ -84,6 +84,23 @@ h1{
     background:#c9a86a;
     color:#111;
 }
+
+.code-wrap{
+    margin-top:24px;
+    font-size:11px;
+    letter-spacing:2px;
+    color:#bbb;
+    text-transform:uppercase;
+}
+
+.code-wrap span{
+    display:inline-block;
+    margin-top:6px;
+    font-size:13px;
+    letter-spacing:3px;
+    color:#c9a86a;
+    font-weight:bold;
+}
 </style>
 </head>
 
@@ -110,6 +127,11 @@ h1{
   <a href="#" class="button">
     CLAIM IN STORE
   </a>
+
+  <div class="code-wrap">
+    your code<br>
+    <span id="discount-code">BIBA-···</span>
+  </div>
 
 </div>
 
@@ -139,6 +161,9 @@ h1{
     sessionStorage.setItem('bibaVetrinaToken', token);
     logSheet(token, 'vetrina');
   }
+
+  var el = document.getElementById('discount-code');
+  if (el) el.textContent = token;
 })();
 </script>
 </body>
