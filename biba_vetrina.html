@@ -1,137 +1,117 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Regalo Sbloccato</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<title>Unlocked Boutique Reward</title>
 
 <style>
-body {
-  margin: 0;
-  background: #000;
-  color: #d8b76a;
-  font-family: Arial, sans-serif;
-  text-align: center;
+body{
+    margin:0;
+    padding:0;
+    background:#f7f2ea;
+    font-family:Arial, Helvetica, sans-serif;
+    color:#2d2d2d;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
 }
 
-.box {
-  margin: 25px auto;
-  padding: 35px 20px;
-  width: 88%;
-  max-width: 430px;
-  border: 1px solid #6b5522;
-  box-shadow: 0 0 25px rgba(216,183,106,0.15);
+.container{
+    width:90%;
+    max-width:420px;
+    background:white;
+    border-radius:24px;
+    padding:40px 30px;
+    text-align:center;
+    box-shadow:0 10px 35px rgba(0,0,0,0.12);
 }
 
-h1 {
-  letter-spacing: 10px;
-  font-size: 20px;
-  margin-bottom: 35px;
+.icon{
+    font-size:58px;
+    margin-bottom:20px;
 }
 
-.gift {
-  font-size: 105px;
-  animation: blinkGift 1s infinite alternate;
+h1{
+    margin:0;
+    font-size:38px;
+    letter-spacing:2px;
+    color:#111;
 }
 
-@keyframes blinkGift {
-  from {
-    transform: scale(1);
-    filter: drop-shadow(0 0 5px #d8b76a);
-  }
-  to {
-    transform: scale(1.12);
-    filter: drop-shadow(0 0 30px #ffd700);
-  }
+.line{
+    width:70px;
+    height:3px;
+    background:#c9a86a;
+    margin:22px auto;
+    border-radius:10px;
 }
 
-.discount {
-  color: #ffe22c;
-  font-size: 60px;
-  font-weight: 900;
-  margin: 25px 0 5px;
+.text{
+    font-size:18px;
+    line-height:1.7;
+    color:#555;
 }
 
-.subtitle {
-  color: white;
-  font-size: 28px;
-  font-weight: 900;
-  margin-bottom: 35px;
+.highlight{
+    color:#000;
+    font-weight:bold;
 }
 
-.text {
-  color: #fff;
-  font-size: 18px;
-  line-height: 1.5;
-  margin: 25px 10px;
+.note{
+    margin-top:28px;
+    font-size:14px;
+    color:#9b8b74;
+    letter-spacing:1px;
 }
 
-.code-label {
-  letter-spacing: 6px;
-  font-size: 13px;
-  margin-top: 30px;
-  opacity: 0.8;
+.button{
+    margin-top:35px;
+    display:inline-block;
+    padding:16px 28px;
+    background:#111;
+    color:white;
+    text-decoration:none;
+    border-radius:40px;
+    font-size:15px;
+    letter-spacing:1px;
+    transition:0.3s;
 }
 
-.code {
-  border: 2px solid #d8b76a;
-  padding: 15px;
-  margin: 12px auto 25px;
-  font-size: 26px;
-  letter-spacing: 5px;
-  font-weight: bold;
-  color: #d8b76a;
-}
-
-.warning {
-  color: #d8b76a;
-  font-size: 15px;
-  margin-top: 25px;
-}
-
-.button {
-  background: #d60000;
-  color: white;
-  padding: 18px;
-  border-radius: 5px;
-  font-size: 18px;
-  font-weight: 900;
-  letter-spacing: 4px;
-  margin-top: 30px;
+.button:hover{
+    background:#c9a86a;
+    color:#111;
 }
 </style>
 </head>
 
 <body>
 
-<div class="box">
+<div class="container">
 
-  <h1>REGALO SBLOCCATO</h1>
+  <div class="icon">🎁</div>
 
-  <div class="gift">🎁</div>
+  <h1>UNLOCKED</h1>
 
-  <div class="discount">5%</div>
-  <div class="subtitle">DI SCONTO</div>
+  <div class="line"></div>
 
   <div class="text">
-    Domani torna da <strong>Biba Boutique</strong>.<br><br>
-    Mostra questo codice o uno screenshot alla cassa e riceverai il
-    <strong>5% di sconto su tutti i tuoi acquisti.</strong>
+    You've unlocked a <span class="highlight">private boutique reward</span>.
+    <br><br>
+    Return tomorrow and show this page in store to activate your privilege.
   </div>
 
-  <div class="code-label">IL TUO CODICE</div>
-
-  <div class="code" id="discount-code">BIBA-…</div>
-
-  <div class="warning">
-    Valido solo domani.<br>
-    Porta lo screenshot con te.
+  <div class="note">
+    ✨ Exclusive for QR visitors only
   </div>
 
-  <div class="button">📱 MOSTRA ALLA CASSA</div>
+  <a href="#" class="button">
+    CLAIM IN STORE
+  </a>
 
 </div>
-
 
 <script>
 (function() {
@@ -159,9 +139,6 @@ h1 {
     sessionStorage.setItem('bibaVetrinaToken', token);
     logSheet(token, 'vetrina');
   }
-
-  var el = document.getElementById('discount-code');
-  if (el) el.textContent = token;
 })();
 </script>
 </body>
