@@ -3,127 +3,263 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-
-<title>Unlocked Boutique Reward</title>
-
+<title>Secret Offer – Biba Boutique</title>
 <style>
+*{box-sizing:border-box;margin:0;padding:0}
+
 body{
-    margin:0;
-    padding:0;
-    background:#f7f2ea;
-    font-family:Arial, Helvetica, sans-serif;
-    color:#2d2d2d;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    height:100vh;
+  min-height:100vh;
+  background:#0a0a0a;
+  font-family:'Arial Black', Arial, sans-serif;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  overflow:hidden;
+  position:relative;
+}
+
+/* sparkle stars */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(201,168,106,0.18) 0%, transparent 40%),
+    radial-gradient(circle at 85% 75%, rgba(201,168,106,0.12) 0%, transparent 40%);
+  pointer-events:none;
+}
+
+.stars{
+  position:fixed;inset:0;
+  pointer-events:none;
+  overflow:hidden;
+}
+.star{
+  position:absolute;
+  width:3px;height:3px;
+  border-radius:50%;
+  background:#c9a86a;
+  opacity:0;
+  animation:twinkle 3s infinite;
+}
+@keyframes twinkle{
+  0%,100%{opacity:0;transform:scale(0.5)}
+  50%{opacity:0.8;transform:scale(1)}
 }
 
 .container{
-    width:90%;
-    max-width:420px;
-    background:white;
-    border-radius:24px;
-    padding:40px 30px;
-    text-align:center;
-    box-shadow:0 10px 35px rgba(0,0,0,0.12);
+  position:relative;
+  width:92%;
+  max-width:400px;
+  text-align:center;
+  padding:10px 20px 40px;
+  z-index:1;
 }
 
-.icon{
-    font-size:58px;
-    margin-bottom:20px;
+/* gift image */
+.gift{
+  font-size:100px;
+  line-height:1;
+  margin-bottom:20px;
+  filter:drop-shadow(0 0 30px rgba(201,168,106,0.6));
+  animation:float 3s ease-in-out infinite;
+}
+@keyframes float{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-10px)}
 }
 
-h1{
-    margin:0;
-    font-size:38px;
-    letter-spacing:2px;
-    color:#111;
+.top-text{
+  font-size:17px;
+  letter-spacing:3px;
+  color:#c9a86a;
+  text-transform:uppercase;
+  margin-bottom:6px;
+  font-weight:normal;
+  font-family:Arial, sans-serif;
 }
 
-.line{
-    width:70px;
-    height:3px;
-    background:#c9a86a;
-    margin:22px auto;
-    border-radius:10px;
+.found{
+  font-size:28px;
+  letter-spacing:4px;
+  color:#fff;
+  text-transform:uppercase;
+  margin-bottom:22px;
+  font-family:Arial, sans-serif;
+  font-weight:bold;
 }
 
-.text{
-    font-size:18px;
-    line-height:1.7;
-    color:#555;
+/* main badge */
+.badge{
+  background:linear-gradient(135deg,#c9a86a 0%,#e8c97a 40%,#c9a86a 100%);
+  border-radius:16px;
+  padding:18px 20px 14px;
+  margin-bottom:14px;
+  box-shadow:0 8px 30px rgba(201,168,106,0.4);
+  border:2px solid rgba(255,255,255,0.2);
 }
 
-.highlight{
-    color:#000;
-    font-weight:bold;
+.main-offer{
+  font-size:60px;
+  font-weight:900;
+  color:#0a0a0a;
+  line-height:1;
+  letter-spacing:2px;
+  text-shadow:2px 2px 0 rgba(0,0,0,0.2);
 }
 
-.note{
-    margin-top:28px;
-    font-size:14px;
-    color:#9b8b74;
-    letter-spacing:1px;
+.free-text{
+  font-size:42px;
+  font-weight:900;
+  color:#0a0a0a;
+  letter-spacing:4px;
 }
 
-.button{
-    margin-top:35px;
-    display:inline-block;
-    padding:16px 28px;
-    background:#111;
-    color:white;
-    text-decoration:none;
-    border-radius:40px;
-    font-size:15px;
-    letter-spacing:1px;
-    transition:0.3s;
+/* extra gift strip */
+.extra{
+  background:#c0392b;
+  border-radius:10px;
+  padding:12px 20px;
+  margin-bottom:20px;
+  box-shadow:0 4px 20px rgba(192,57,43,0.5);
 }
 
-.button:hover{
-    background:#c9a86a;
-    color:#111;
+.extra-text{
+  font-size:22px;
+  font-weight:900;
+  color:#fff;
+  letter-spacing:3px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
 }
 
+.diamond{color:#c9a86a;font-size:14px}
+
+/* logo badge */
+.logo-badge{
+  width:48px;height:48px;
+  background:linear-gradient(135deg,#1a1a1a,#333);
+  border:2px solid #c9a86a;
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 14px;
+  font-size:20px;
+  font-weight:900;
+  color:#c9a86a;
+  letter-spacing:0;
+}
+
+/* qr visitors */
+.qr-line{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  margin-bottom:28px;
+}
+
+.qr-sep{
+  flex:1;
+  height:1px;
+  background:rgba(201,168,106,0.4);
+  max-width:70px;
+}
+
+.qr-text{
+  font-size:12px;
+  letter-spacing:3px;
+  color:#c9a86a;
+  text-transform:uppercase;
+  font-family:Arial,sans-serif;
+  white-space:nowrap;
+}
+
+/* CTA button */
+.cta{
+  display:block;
+  width:100%;
+  padding:18px 20px;
+  background:#c0392b;
+  color:#fff;
+  text-decoration:none;
+  border-radius:50px;
+  font-size:16px;
+  font-weight:900;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  box-shadow:0 6px 25px rgba(192,57,43,0.5);
+  border:none;
+  cursor:pointer;
+  transition:transform 0.15s,box-shadow 0.15s;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+}
+
+.cta:active{
+  transform:scale(0.97);
+  box-shadow:0 3px 15px rgba(192,57,43,0.4);
+}
+
+.cta-icon{font-size:20px}
+
+/* token */
 .code-wrap{
-    margin-top:24px;
-    font-size:11px;
-    letter-spacing:2px;
-    color:#bbb;
-    text-transform:uppercase;
+  margin-top:22px;
+  font-size:11px;
+  letter-spacing:2px;
+  color:#555;
+  text-transform:uppercase;
+  font-family:Arial,sans-serif;
 }
-
 .code-wrap span{
-    display:inline-block;
-    margin-top:6px;
-    font-size:13px;
-    letter-spacing:3px;
-    color:#c9a86a;
-    font-weight:bold;
+  display:inline-block;
+  margin-top:5px;
+  font-size:14px;
+  letter-spacing:4px;
+  color:#c9a86a;
+  font-weight:bold;
 }
 </style>
 </head>
-
 <body>
+
+<!-- sparkle stars -->
+<div class="stars" id="stars"></div>
 
 <div class="container">
 
-  <div class="icon">🎁</div>
+  <div class="gift">🎁</div>
 
-  <h1>UNLOCKED</h1>
+  <div class="top-text">you found the</div>
+  <div class="found">Secret Offer</div>
 
-  <div class="line"></div>
-
-  <div class="text">
-    Return tomorrow and show this page in store to activate your private shopping privilege.
+  <div class="badge">
+    <div class="main-offer">2+1</div>
+    <div class="free-text">FREE</div>
   </div>
 
-  <div class="note">
-    ✨ Exclusive for QR visitors only
+  <div class="extra">
+    <div class="extra-text">
+      <span class="diamond">✦</span>
+      + EXTRA GIFT +
+      <span class="diamond">✦</span>
+    </div>
   </div>
 
-  <a href="#" class="button">
-    CLAIM IN STORE
+  <div class="logo-badge">B</div>
+
+  <div class="qr-line">
+    <div class="qr-sep"></div>
+    <div class="qr-text">Only for QR Visitors</div>
+    <div class="qr-sep"></div>
+  </div>
+
+  <a href="#" class="cta">
+    <span class="cta-icon">📱</span>
+    SHOW THIS SCREEN AT THE COUNTER
   </a>
 
   <div class="code-wrap">
@@ -134,34 +270,48 @@ h1{
 </div>
 
 <script>
-(function() {
-  var GAS = 'https://script.google.com/macros/s/AKfycbx0Qd3zb39OjjG4BhOjX3Ph7h85WIYMGnBm9imZn3tSej54h4YWaAlFjfeIwG400_Jx/exec';
+// generate sparkle stars
+(function(){
+  var s=document.getElementById('stars');
+  for(var i=0;i<60;i++){
+    var d=document.createElement('div');
+    d.className='star';
+    d.style.left=Math.random()*100+'%';
+    d.style.top=Math.random()*100+'%';
+    d.style.animationDelay=Math.random()*4+'s';
+    d.style.animationDuration=(2+Math.random()*3)+'s';
+    s.appendChild(d);
+  }
+})();
 
-  function genToken() {
-    var c = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', t = 'BIBA-';
-    for (var i = 0; i < 6; i++) t += c[Math.floor(Math.random() * c.length)];
+(function(){
+  var GAS='https://script.google.com/macros/s/AKfycbx0Qd3zb39OjjG4BhOjX3Ph7h85WIYMGnBm9imZn3tSej54h4YWaAlFjfeIwG400_Jx/exec';
+
+  function genToken(){
+    var c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',t='BIBA-';
+    for(var i=0;i<6;i++) t+=c[Math.floor(Math.random()*c.length)];
     return t;
   }
 
-  function logSheet(token, tipo) {
-    try {
-      fetch(GAS, {
-        method: 'POST', mode: 'no-cors',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ token: token, tipo: tipo, timestamp: new Date().toISOString() })
+  function logSheet(token,tipo){
+    try{
+      fetch(GAS,{
+        method:'POST',mode:'no-cors',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({token:token,tipo:tipo,timestamp:new Date().toISOString()})
       });
-    } catch(e) {}
+    }catch(e){}
   }
 
-  var token = sessionStorage.getItem('bibaVetrinaToken');
-  if (!token) {
-    token = genToken();
-    sessionStorage.setItem('bibaVetrinaToken', token);
-    logSheet(token, 'vetrina');
+  var token=sessionStorage.getItem('bibaVetrinaToken');
+  if(!token){
+    token=genToken();
+    sessionStorage.setItem('bibaVetrinaToken',token);
+    logSheet(token,'vetrina');
   }
 
-  var el = document.getElementById('discount-code');
-  if (el) el.textContent = token;
+  var el=document.getElementById('discount-code');
+  if(el) el.textContent=token;
 })();
 </script>
 </body>
