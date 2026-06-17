@@ -175,6 +175,56 @@ body::before{
   white-space:nowrap;
 }
 
+/* ── Hours / closed overlay ── */
+#closed-overlay{
+  position:fixed;inset:0;
+  background:#0a0a0a;
+  z-index:999;
+  display:none;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:32px;
+}
+.closed-icon{font-size:60px;margin-bottom:16px;}
+.closed-title{
+  font-size:22px;font-weight:900;
+  letter-spacing:4px;text-transform:uppercase;
+  color:#c9a86a;margin-bottom:12px;
+}
+.closed-msg{
+  font-size:14px;color:rgba(255,255,255,0.55);
+  line-height:1.8;letter-spacing:1px;
+}
+.closed-hours{
+  margin-top:20px;
+  font-size:20px;font-weight:900;
+  color:#fff;letter-spacing:3px;
+}
+
+/* ── Urgency bar ── */
+#urgency-bar{
+  background:linear-gradient(90deg,#c0392b,#e74c3c);
+  color:#fff;
+  text-align:center;
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  padding:10px;
+  margin-bottom:14px;
+  border-radius:8px;
+  display:none;
+}
+
+/* ── CTA confirmed state ── */
+.cta.confirmed{
+  background:rgba(40,167,69,0.9);
+  box-shadow:0 6px 25px rgba(40,167,69,0.5);
+  pointer-events:none;
+}
+
 /* CTA button */
 .cta{
   display:block;
@@ -226,6 +276,14 @@ body::before{
 </head>
 <body>
 
+<!-- Closed overlay -->
+<div id="closed-overlay">
+  <div class="closed-icon">🕐</div>
+  <div class="closed-title">We're Closed</div>
+  <div class="closed-msg">Come back during opening hours<br>and scan this QR code again!</div>
+  <div class="closed-hours" id="closed-hours-text">Open 10:00 – 20:00</div>
+</div>
+
 <!-- sparkle stars -->
 <div class="stars" id="stars"></div>
 
@@ -251,16 +309,18 @@ body::before{
 
   <div class="logo-badge">B</div>
 
+  <div id="urgency-bar">⏳ Offer closes at <span id="close-time">20:00</span> — valid today only</div>
+
   <div class="qr-line">
     <div class="qr-sep"></div>
     <div class="qr-text">Only for QR Visitors</div>
     <div class="qr-sep"></div>
   </div>
 
-  <a href="#" class="cta">
+  <button id="cta-btn" class="cta" onclick="claimOffer()">
     <span class="cta-icon">📱</span>
     SHOW THIS SCREEN AT THE COUNTER
-  </a>
+  </button>
 
   <div class="code-wrap">
     your code<br>
@@ -270,7 +330,14 @@ body::before{
 </div>
 
 <script>
-// generate sparkle stars
+// ── Configurazione orari (modifica questi valori) ──────────────────────
+var OPEN_HOUR  = 10;   // apertura
+var CLOSE_HOUR = 20;   // chiusura
+// ───────────────────────────────────────────────────────────────────────
+
+var GAS = 'https://script.google.com/macros/s/AKfycbx0Qd3zb39OjjG4BhOjX3Ph7h85WIYMGnBm9imZn3tSej54h4YWaAlFjfeIwG400_Jx/exec';
+
+// sparkle stars
 (function(){
   var s=document.getElementById('stars');
   for(var i=0;i<60;i++){
@@ -284,35 +351,84 @@ body::before{
   }
 })();
 
-(function(){
-  var GAS='https://script.google.com/macros/s/AKfycbx0Qd3zb39OjjG4BhOjX3Ph7h85WIYMGnBm9imZn3tSej54h4YWaAlFjfeIwG400_Jx/exec';
+function genToken(){
+  var c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789', t='BIBA-';
+  for(var i=0;i<6;i++) t+=c[Math.floor(Math.random()*c.length)];
+  return t;
+}
 
-  function genToken(){
-    var c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',t='BIBA-';
-    for(var i=0;i<6;i++) t+=c[Math.floor(Math.random()*c.length)];
-    return t;
+function logSheet(token, tipo){
+  try{
+    fetch(GAS,{
+      method:'POST', mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({token:token, tipo:tipo, timestamp:new Date().toISOString()})
+    });
+  }catch(e){}
+}
+
+// Controlla orari apertura
+(function checkHours(){
+  var now   = new Date();
+  var h     = now.getHours();
+  var isOpen = h >= OPEN_HOUR && h < CLOSE_HOUR;
+
+  if(!isOpen){
+    var overlay = document.getElementById('closed-overlay');
+    overlay.style.display = 'flex';
+    var txt = document.getElementById('closed-hours-text');
+    if(txt) txt.textContent = 'Open ' + OPEN_HOUR + ':00 – ' + CLOSE_HOUR + ':00';
+    return;
   }
 
-  function logSheet(token,tipo){
-    try{
-      fetch(GAS,{
-        method:'POST',mode:'no-cors',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({token:token,tipo:tipo,timestamp:new Date().toISOString()})
-      });
-    }catch(e){}
+  // Mostra barra urgenza con conto alla rovescia
+  var urgencyBar  = document.getElementById('urgency-bar');
+  var closeTimeEl = document.getElementById('close-time');
+  if(urgencyBar){
+    urgencyBar.style.display = 'block';
+    var closeDate = new Date();
+    closeDate.setHours(CLOSE_HOUR, 0, 0, 0);
+    function updateCountdown(){
+      var diff = Math.max(0, closeDate - new Date());
+      var hh   = Math.floor(diff / 3600000);
+      var mm   = Math.floor((diff % 3600000) / 60000);
+      if(closeTimeEl){
+        if(hh > 0)
+          closeTimeEl.textContent = CLOSE_HOUR + ':00 (' + hh + 'h ' + mm + 'min left)';
+        else if(mm > 0)
+          closeTimeEl.textContent = CLOSE_HOUR + ':00 (' + mm + ' min left!)';
+        else
+          closeTimeEl.textContent = CLOSE_HOUR + ':00';
+      }
+    }
+    updateCountdown();
+    setInterval(updateCountdown, 60000);
   }
-
-  var token=sessionStorage.getItem('bibaVetrinaToken');
-  if(!token){
-    token=genToken();
-    sessionStorage.setItem('bibaVetrinaToken',token);
-    logSheet(token,'vetrina');
-  }
-
-  var el=document.getElementById('discount-code');
-  if(el) el.textContent=token;
 })();
+
+// Token e log vetrina
+var token = sessionStorage.getItem('bibaVetrinaToken');
+if(!token){
+  token = genToken();
+  sessionStorage.setItem('bibaVetrinaToken', token);
+  logSheet(token, 'vetrina');
+}
+var el = document.getElementById('discount-code');
+if(el) el.textContent = token;
+
+// CTA: logga cassa quando il cliente mostra lo schermo al banco
+function claimOffer(){
+  var alreadyClaimed = sessionStorage.getItem('bibaCassaLogged');
+  if(alreadyClaimed) return;
+  sessionStorage.setItem('bibaCassaLogged', '1');
+  logSheet(token, 'cassa');
+
+  var btn = document.getElementById('cta-btn');
+  if(btn){
+    btn.classList.add('confirmed');
+    btn.innerHTML = '<span class="cta-icon">✅</span> OFFER ACTIVATED — SHOW TO STAFF';
+  }
+}
 </script>
 </body>
 </html>

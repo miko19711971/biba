@@ -201,7 +201,36 @@ document.getElementById('slides-wrapper').addEventListener('touchend', e=>{
     } catch(e) {}
   }
 
-  logSheet('cassa');
+  // Se manca il token nell'URL, chiedi allo staff di inserirlo manualmente
+  if (!token) {
+    var tokenBar = document.createElement('div');
+    tokenBar.id = 'biba-token-bar';
+    tokenBar.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#1a1a1a;border-bottom:2px solid #c9a86a;padding:10px 16px;z-index:1000;text-align:center;';
+    tokenBar.innerHTML = '<div style="font-size:10px;letter-spacing:2px;color:#c9a86a;text-transform:uppercase;margin-bottom:6px;">Inserisci codice cliente</div>'
+      + '<div style="display:flex;gap:8px;max-width:320px;margin:0 auto;">'
+      + '<input id="biba-token-input" type="text" maxlength="11" placeholder="BIBA-XXXXXX"'
+      + ' style="flex:1;background:transparent;border:1px solid #555;color:#fff;font-size:15px;letter-spacing:3px;text-align:center;padding:7px;font-family:monospace;outline:none;border-radius:2px;text-transform:uppercase;"/>'
+      + '<button onclick="bibaSetToken()" style="background:#c9a86a;border:none;color:#0a0a0a;font-size:11px;font-weight:900;letter-spacing:2px;text-transform:uppercase;padding:7px 14px;cursor:pointer;border-radius:2px;">OK</button>'
+      + '</div>';
+    document.body.insertBefore(tokenBar, document.body.firstChild);
+
+    window.bibaSetToken = function() {
+      var val = (document.getElementById('biba-token-input').value || '').trim().toUpperCase();
+      if (!val.startsWith('BIBA-') || val.length !== 11) {
+        document.getElementById('biba-token-input').style.borderColor = '#e63946';
+        return;
+      }
+      token = val;
+      logSheet('cassa');
+      var bar = document.getElementById('biba-token-bar');
+      if (bar) {
+        bar.innerHTML = '<div style="font-size:11px;letter-spacing:2px;color:#4caf50;text-transform:uppercase;padding:4px;">&#10003; ' + token + ' registrato</div>';
+        setTimeout(function(){ if(bar.parentNode) bar.parentNode.removeChild(bar); }, 3000);
+      }
+    };
+  } else {
+    logSheet('cassa');
+  }
 
   var sec = document.createElement('div');
   sec.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:#0d0d0d;border-top:1px solid rgba(201,169,110,0.15);padding:12px 16px;z-index:999;';
