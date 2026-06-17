@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Secret Offer – Biba Boutique</title>
+<title>Your Secret Discount – Biba Boutique</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 
 body{
   min-height:100vh;
   background:#0a0a0a;
-  font-family:'Arial Black', Arial, sans-serif;
+  font-family:'Arial', sans-serif;
   display:flex;
   justify-content:center;
   align-items:center;
@@ -18,305 +18,235 @@ body{
   position:relative;
 }
 
-/* sparkle stars */
+/* ambient glow */
 body::before{
   content:'';
   position:fixed;inset:0;
   background:
-    radial-gradient(circle at 15% 20%, rgba(201,168,106,0.18) 0%, transparent 40%),
-    radial-gradient(circle at 85% 75%, rgba(201,168,106,0.12) 0%, transparent 40%);
+    radial-gradient(circle at 20% 30%, rgba(201,168,106,0.10) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(201,168,106,0.07) 0%, transparent 50%);
   pointer-events:none;
 }
 
-.stars{
-  position:fixed;inset:0;
-  pointer-events:none;
-  overflow:hidden;
-}
+/* sparkle stars */
+.stars{position:fixed;inset:0;pointer-events:none;overflow:hidden;}
 .star{
-  position:absolute;
-  width:3px;height:3px;
-  border-radius:50%;
-  background:#c9a86a;
-  opacity:0;
-  animation:twinkle 3s infinite;
+  position:absolute;width:2px;height:2px;border-radius:50%;
+  background:#c9a86a;opacity:0;animation:twinkle 3s infinite;
 }
 @keyframes twinkle{
   0%,100%{opacity:0;transform:scale(0.5)}
-  50%{opacity:0.8;transform:scale(1)}
+  50%{opacity:0.6;transform:scale(1)}
 }
 
-.container{
+/* card */
+.card{
   position:relative;
-  width:92%;
-  max-width:400px;
+  width:92%;max-width:380px;
   text-align:center;
-  padding:10px 20px 40px;
+  padding:36px 28px 32px;
   z-index:1;
+  border:1px solid rgba(201,168,106,0.15);
+  border-radius:20px;
+  background:rgba(255,255,255,0.02);
+  backdrop-filter:blur(4px);
 }
 
-/* gift image */
-.gift{
-  font-size:100px;
-  line-height:1;
-  margin-bottom:20px;
-  filter:drop-shadow(0 0 30px rgba(201,168,106,0.6));
-  animation:float 3s ease-in-out infinite;
-}
-@keyframes float{
-  0%,100%{transform:translateY(0)}
-  50%{transform:translateY(-10px)}
-}
-
-.top-text{
-  font-size:17px;
-  letter-spacing:3px;
-  color:#c9a86a;
+/* brand */
+.brand{
+  font-size:10px;
+  letter-spacing:6px;
   text-transform:uppercase;
-  margin-bottom:6px;
-  font-weight:normal;
-  font-family:Arial, sans-serif;
-}
-
-.found{
-  font-size:28px;
-  letter-spacing:4px;
-  color:#fff;
-  text-transform:uppercase;
-  margin-bottom:22px;
-  font-family:Arial, sans-serif;
-  font-weight:bold;
-}
-
-/* main badge */
-.badge{
-  background:linear-gradient(135deg,#c9a86a 0%,#e8c97a 40%,#c9a86a 100%);
-  border-radius:16px;
-  padding:18px 20px 14px;
-  margin-bottom:14px;
-  box-shadow:0 8px 30px rgba(201,168,106,0.4);
-  border:2px solid rgba(255,255,255,0.2);
-}
-
-.main-offer{
-  font-size:60px;
-  font-weight:900;
-  color:#0a0a0a;
-  line-height:1;
-  letter-spacing:2px;
-  text-shadow:2px 2px 0 rgba(0,0,0,0.2);
-}
-
-.free-text{
-  font-size:42px;
-  font-weight:900;
-  color:#0a0a0a;
-  letter-spacing:4px;
-}
-
-/* extra gift strip */
-.extra{
-  background:#c0392b;
-  border-radius:10px;
-  padding:12px 20px;
-  margin-bottom:20px;
-  box-shadow:0 4px 20px rgba(192,57,43,0.5);
-}
-
-.extra-text{
-  font-size:22px;
-  font-weight:900;
-  color:#fff;
-  letter-spacing:3px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:10px;
-}
-
-.diamond{color:#c9a86a;font-size:14px}
-
-/* logo badge */
-.logo-badge{
-  width:48px;height:48px;
-  background:linear-gradient(135deg,#1a1a1a,#333);
-  border:2px solid #c9a86a;
-  border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-  margin:0 auto 14px;
-  font-size:20px;
-  font-weight:900;
-  color:#c9a86a;
-  letter-spacing:0;
-}
-
-/* qr visitors */
-.qr-line{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:12px;
+  color:rgba(201,168,106,0.5);
   margin-bottom:28px;
 }
 
-.qr-sep{
-  flex:1;
-  height:1px;
-  background:rgba(201,168,106,0.4);
-  max-width:70px;
+/* checkmark */
+.check{
+  width:56px;height:56px;
+  background:rgba(40,167,69,0.15);
+  border:2px solid rgba(40,167,69,0.6);
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 20px;
+  font-size:26px;
+  animation:popIn 0.5s cubic-bezier(0.175,0.885,0.32,1.275) both;
+}
+@keyframes popIn{
+  from{transform:scale(0);opacity:0}
+  to{transform:scale(1);opacity:1}
 }
 
-.qr-text{
-  font-size:12px;
+/* headline */
+.headline{
+  font-size:13px;
   letter-spacing:3px;
+  text-transform:uppercase;
+  color:rgba(255,255,255,0.45);
+  margin-bottom:8px;
+  font-weight:400;
+}
+
+/* discount hero */
+.discount{
+  font-size:88px;
+  font-weight:900;
+  line-height:1;
+  background:linear-gradient(135deg,#c9a86a 0%,#f0d78a 50%,#c9a86a 100%);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+  letter-spacing:-2px;
+  margin-bottom:4px;
+}
+
+/* activated line */
+.activated{
+  font-size:13px;
+  letter-spacing:3px;
+  text-transform:uppercase;
+  color:rgba(255,255,255,0.45);
+  margin-bottom:20px;
+}
+
+/* divider */
+.divider{
+  width:40px;height:1px;
+  background:rgba(201,168,106,0.3);
+  margin:0 auto 18px;
+}
+
+/* applies-to */
+.applies{
+  font-size:14px;
+  color:rgba(255,255,255,0.75);
+  letter-spacing:1px;
+  line-height:1.7;
+  margin-bottom:6px;
+}
+.applies strong{
   color:#c9a86a;
-  text-transform:uppercase;
-  font-family:Arial,sans-serif;
-  white-space:nowrap;
+  font-weight:700;
 }
 
-/* ── Urgency bar ── */
-#urgency-bar{
-  background:linear-gradient(90deg,#c0392b,#e74c3c);
-  color:#fff;
-  text-align:center;
+/* location */
+.location{
+  font-size:10px;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  color:rgba(255,255,255,0.2);
+  margin-bottom:28px;
+}
+
+/* urgency */
+.urgency{
   font-size:11px;
-  font-weight:900;
   letter-spacing:2px;
   text-transform:uppercase;
-  padding:10px;
-  margin-bottom:14px;
+  color:#c0392b;
+  margin-bottom:24px;
+  font-weight:700;
+}
+
+/* token */
+.token-wrap{
+  display:inline-block;
+  border:1px solid rgba(201,168,106,0.3);
   border-radius:8px;
-  display:none;
+  padding:8px 20px;
+  margin-bottom:24px;
 }
-
-/* ── CTA confirmed state ── */
-.cta.confirmed{
-  background:rgba(40,167,69,0.9);
-  box-shadow:0 6px 25px rgba(40,167,69,0.5);
-  pointer-events:none;
+.token-label{
+  font-size:9px;
+  letter-spacing:3px;
+  text-transform:uppercase;
+  color:rgba(255,255,255,0.2);
+  margin-bottom:4px;
 }
-
-/* CTA button */
-.cta{
-  display:block;
-  width:100%;
-  padding:18px 20px;
-  background:#c0392b;
-  color:#fff;
-  text-decoration:none;
-  border-radius:50px;
+.token-code{
   font-size:16px;
+  letter-spacing:5px;
+  color:#c9a86a;
+  font-weight:700;
+  font-family:monospace;
+}
+
+/* CTA */
+.cta{
+  width:100%;
+  padding:16px 20px;
+  background:#c9a86a;
+  color:#0a0a0a;
+  border:none;
+  border-radius:50px;
+  font-size:12px;
   font-weight:900;
   letter-spacing:2px;
   text-transform:uppercase;
-  box-shadow:0 6px 25px rgba(192,57,43,0.5);
-  border:none;
   cursor:pointer;
-  transition:transform 0.15s,box-shadow 0.15s;
+  transition:all 0.2s;
   display:flex;
   align-items:center;
   justify-content:center;
   gap:10px;
+  box-shadow:0 6px 30px rgba(201,168,106,0.3);
 }
-
-.cta:active{
-  transform:scale(0.97);
-  box-shadow:0 3px 15px rgba(192,57,43,0.4);
-}
-
-.cta-icon{font-size:20px}
-
-/* token */
-.code-wrap{
-  margin-top:22px;
-  font-size:11px;
-  letter-spacing:2px;
-  color:#555;
-  text-transform:uppercase;
-  font-family:Arial,sans-serif;
-}
-.code-wrap span{
-  display:inline-block;
-  margin-top:5px;
-  font-size:14px;
-  letter-spacing:4px;
-  color:#c9a86a;
-  font-weight:bold;
+.cta:active{transform:scale(0.97);}
+.cta.confirmed{
+  background:rgba(40,167,69,0.9);
+  color:#fff;
+  box-shadow:0 6px 25px rgba(40,167,69,0.4);
+  pointer-events:none;
 }
 </style>
 </head>
 <body>
 
-<!-- sparkle stars -->
 <div class="stars" id="stars"></div>
 
-<div class="container">
+<div class="card">
+  <div class="brand">Biba Boutique · Roma</div>
 
-  <div class="gift">🎁</div>
+  <div class="check">✓</div>
 
-  <div class="top-text">you found the</div>
-  <div class="found">Secret Offer</div>
+  <div class="headline">Your secret discount</div>
+  <div class="discount">15%</div>
+  <div class="activated">has been activated</div>
 
-  <div class="badge">
-    <div class="main-offer">2+1</div>
-    <div class="free-text">FREE</div>
-  </div>
+  <div class="divider"></div>
 
-  <div class="extra">
-    <div class="extra-text">
-      <span class="diamond">✦</span>
-      + EXTRA GIFT +
-      <span class="diamond">✦</span>
-    </div>
-  </div>
+  <div class="applies">on <strong>foulards &amp; accessories</strong></div>
+  <div class="location">Via delle Muratte 88 · Rome</div>
 
-  <div class="logo-badge">B</div>
+  <div class="urgency">⏳ Valid today until <span id="close-time">18:45</span></div>
 
-  <div id="urgency-bar">⏳ Offer closes at <span id="close-time">18:45</span> — valid today only</div>
-
-  <div class="qr-line">
-    <div class="qr-sep"></div>
-    <div class="qr-text">Only for QR Visitors</div>
-    <div class="qr-sep"></div>
+  <div class="token-wrap">
+    <div class="token-label">your code</div>
+    <div class="token-code" id="discount-code">BIBA-···</div>
   </div>
 
   <button id="cta-btn" class="cta" onclick="claimOffer()">
-    <span class="cta-icon">📱</span>
-    SHOW THIS SCREEN AT THE COUNTER
+    Show this screen at the counter
   </button>
-
-  <div class="code-wrap">
-    your code<br>
-    <span id="discount-code">BIBA-···</span>
-  </div>
-
 </div>
 
 <script>
-var CLOSE_HOUR = 18, CLOSE_MIN = 45;   // ora chiusura (per il countdown urgenza)
-
+var CLOSE_HOUR = 18, CLOSE_MIN = 45;
 var GAS = 'https://script.google.com/macros/s/AKfycbx0Qd3zb39OjjG4BhOjX3Ph7h85WIYMGnBm9imZn3tSej54h4YWaAlFjfeIwG400_Jx/exec';
 
 // sparkle stars
 (function(){
-  var s=document.getElementById('stars');
-  for(var i=0;i<60;i++){
-    var d=document.createElement('div');
-    d.className='star';
-    d.style.left=Math.random()*100+'%';
-    d.style.top=Math.random()*100+'%';
-    d.style.animationDelay=Math.random()*4+'s';
-    d.style.animationDuration=(2+Math.random()*3)+'s';
+  var s = document.getElementById('stars');
+  for(var i = 0; i < 50; i++){
+    var d = document.createElement('div');
+    d.className = 'star';
+    d.style.left = Math.random()*100+'%';
+    d.style.top  = Math.random()*100+'%';
+    d.style.animationDelay    = Math.random()*4+'s';
+    d.style.animationDuration = (2+Math.random()*3)+'s';
     s.appendChild(d);
   }
 })();
-
-function genToken(){
-  var c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789', t='BIBA-';
-  for(var i=0;i<6;i++) t+=c[Math.floor(Math.random()*c.length)];
-  return t;
-}
 
 function logSheet(token, tipo){
   try{
@@ -328,34 +258,33 @@ function logSheet(token, tipo){
   }catch(e){}
 }
 
-// Barra urgenza con conto alla rovescia
+function genToken(){
+  var c = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', t = 'BIBA-';
+  for(var i = 0; i < 6; i++) t += c[Math.floor(Math.random()*c.length)];
+  return t;
+}
+
+// countdown
 (function(){
-  var urgencyBar  = document.getElementById('urgency-bar');
-  var closeTimeEl = document.getElementById('close-time');
-  if(urgencyBar){
-    urgencyBar.style.display = 'block';
-    var closeDate = new Date();
-    closeDate.setHours(CLOSE_HOUR, CLOSE_MIN, 0, 0);
-    var closeLabel = CLOSE_HOUR + ':' + (CLOSE_MIN < 10 ? '0' : '') + CLOSE_MIN;
-    function updateCountdown(){
-      var diff = Math.max(0, closeDate - new Date());
-      var hh   = Math.floor(diff / 3600000);
-      var mm   = Math.floor((diff % 3600000) / 60000);
-      if(closeTimeEl){
-        if(hh > 0)
-          closeTimeEl.textContent = closeLabel + ' (' + hh + 'h ' + mm + 'min left)';
-        else if(mm > 0)
-          closeTimeEl.textContent = closeLabel + ' (' + mm + ' min left!)';
-        else
-          closeTimeEl.textContent = closeLabel;
-      }
+  var el = document.getElementById('close-time');
+  var closeDate = new Date();
+  closeDate.setHours(CLOSE_HOUR, CLOSE_MIN, 0, 0);
+  var closeLabel = CLOSE_HOUR + ':' + (CLOSE_MIN < 10 ? '0' : '') + CLOSE_MIN;
+  function tick(){
+    var diff = Math.max(0, closeDate - new Date());
+    var hh = Math.floor(diff / 3600000);
+    var mm = Math.floor((diff % 3600000) / 60000);
+    if(el){
+      if(hh > 0)       el.textContent = closeLabel + ' — ' + hh + 'h ' + mm + 'min left';
+      else if(mm > 0)  el.textContent = closeLabel + ' — ' + mm + ' min left!';
+      else             el.textContent = closeLabel;
     }
-    updateCountdown();
-    setInterval(updateCountdown, 60000);
   }
+  tick();
+  setInterval(tick, 60000);
 })();
 
-// Token e log vetrina
+// token
 var token = sessionStorage.getItem('bibaVetrinaToken');
 if(!token){
   token = genToken();
@@ -365,17 +294,15 @@ if(!token){
 var el = document.getElementById('discount-code');
 if(el) el.textContent = token;
 
-// CTA: logga cassa quando il cliente mostra lo schermo al banco
+// CTA
 function claimOffer(){
-  var alreadyClaimed = sessionStorage.getItem('bibaCassaLogged');
-  if(alreadyClaimed) return;
+  if(sessionStorage.getItem('bibaCassaLogged')) return;
   sessionStorage.setItem('bibaCassaLogged', '1');
   logSheet(token, 'cassa');
-
   var btn = document.getElementById('cta-btn');
   if(btn){
     btn.classList.add('confirmed');
-    btn.innerHTML = '<span class="cta-icon">✅</span> OFFER ACTIVATED — SHOW TO STAFF';
+    btn.textContent = '✅  Discount ready — show to staff';
   }
 }
 </script>
