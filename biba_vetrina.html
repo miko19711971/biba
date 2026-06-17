@@ -273,7 +273,7 @@ body::before{
 
   <div class="logo-badge">B</div>
 
-  <div id="urgency-bar">⏳ Offer closes at <span id="close-time">20:00</span> — valid today only</div>
+  <div id="urgency-bar">⏳ Offer closes at <span id="close-time">18:45</span> — valid today only</div>
 
   <div class="qr-line">
     <div class="qr-sep"></div>
@@ -294,7 +294,7 @@ body::before{
 </div>
 
 <script>
-var CLOSE_HOUR = 20;   // ora chiusura (per il countdown urgenza)
+var CLOSE_HOUR = 18, CLOSE_MIN = 45;   // ora chiusura (per il countdown urgenza)
 
 var GAS = 'https://script.google.com/macros/s/AKfycbx0Qd3zb39OjjG4BhOjX3Ph7h85WIYMGnBm9imZn3tSej54h4YWaAlFjfeIwG400_Jx/exec';
 
@@ -335,18 +335,19 @@ function logSheet(token, tipo){
   if(urgencyBar){
     urgencyBar.style.display = 'block';
     var closeDate = new Date();
-    closeDate.setHours(CLOSE_HOUR, 0, 0, 0);
+    closeDate.setHours(CLOSE_HOUR, CLOSE_MIN, 0, 0);
+    var closeLabel = CLOSE_HOUR + ':' + (CLOSE_MIN < 10 ? '0' : '') + CLOSE_MIN;
     function updateCountdown(){
       var diff = Math.max(0, closeDate - new Date());
       var hh   = Math.floor(diff / 3600000);
       var mm   = Math.floor((diff % 3600000) / 60000);
       if(closeTimeEl){
         if(hh > 0)
-          closeTimeEl.textContent = CLOSE_HOUR + ':00 (' + hh + 'h ' + mm + 'min left)';
+          closeTimeEl.textContent = closeLabel + ' (' + hh + 'h ' + mm + 'min left)';
         else if(mm > 0)
-          closeTimeEl.textContent = CLOSE_HOUR + ':00 (' + mm + ' min left!)';
+          closeTimeEl.textContent = closeLabel + ' (' + mm + ' min left!)';
         else
-          closeTimeEl.textContent = CLOSE_HOUR + ':00';
+          closeTimeEl.textContent = closeLabel;
       }
     }
     updateCountdown();
