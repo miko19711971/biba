@@ -175,34 +175,6 @@ body::before{
   white-space:nowrap;
 }
 
-/* ── Hours / closed overlay ── */
-#closed-overlay{
-  position:fixed;inset:0;
-  background:#0a0a0a;
-  z-index:999;
-  display:none;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
-  padding:32px;
-}
-.closed-icon{font-size:60px;margin-bottom:16px;}
-.closed-title{
-  font-size:22px;font-weight:900;
-  letter-spacing:4px;text-transform:uppercase;
-  color:#c9a86a;margin-bottom:12px;
-}
-.closed-msg{
-  font-size:14px;color:rgba(255,255,255,0.55);
-  line-height:1.8;letter-spacing:1px;
-}
-.closed-hours{
-  margin-top:20px;
-  font-size:20px;font-weight:900;
-  color:#fff;letter-spacing:3px;
-}
-
 /* ── Urgency bar ── */
 #urgency-bar{
   background:linear-gradient(90deg,#c0392b,#e74c3c);
@@ -276,14 +248,6 @@ body::before{
 </head>
 <body>
 
-<!-- Closed overlay -->
-<div id="closed-overlay">
-  <div class="closed-icon">🕐</div>
-  <div class="closed-title">We're Closed</div>
-  <div class="closed-msg">Come back during opening hours<br>and scan this QR code again!</div>
-  <div class="closed-hours" id="closed-hours-text">Open 10:00 – 20:00</div>
-</div>
-
 <!-- sparkle stars -->
 <div class="stars" id="stars"></div>
 
@@ -330,10 +294,7 @@ body::before{
 </div>
 
 <script>
-// ── Configurazione orari (modifica questi valori) ──────────────────────
-var OPEN_HOUR  = 10;   // apertura
-var CLOSE_HOUR = 20;   // chiusura
-// ───────────────────────────────────────────────────────────────────────
+var CLOSE_HOUR = 20;   // ora chiusura (per il countdown urgenza)
 
 var GAS = 'https://script.google.com/macros/s/AKfycbx0Qd3zb39OjjG4BhOjX3Ph7h85WIYMGnBm9imZn3tSej54h4YWaAlFjfeIwG400_Jx/exec';
 
@@ -367,21 +328,8 @@ function logSheet(token, tipo){
   }catch(e){}
 }
 
-// Controlla orari apertura
-(function checkHours(){
-  var now   = new Date();
-  var h     = now.getHours();
-  var isOpen = h >= OPEN_HOUR && h < CLOSE_HOUR;
-
-  if(!isOpen){
-    var overlay = document.getElementById('closed-overlay');
-    overlay.style.display = 'flex';
-    var txt = document.getElementById('closed-hours-text');
-    if(txt) txt.textContent = 'Open ' + OPEN_HOUR + ':00 – ' + CLOSE_HOUR + ':00';
-    return;
-  }
-
-  // Mostra barra urgenza con conto alla rovescia
+// Barra urgenza con conto alla rovescia
+(function(){
   var urgencyBar  = document.getElementById('urgency-bar');
   var closeTimeEl = document.getElementById('close-time');
   if(urgencyBar){
