@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Your Secret Offer – Biba Boutique</title>
+<title>Free Scarf Styling – Biba Boutique</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 
@@ -87,17 +87,18 @@ body::before{
   font-weight:400;
 }
 
-/* discount hero */
+/* hero */
 .discount{
-  font-size:88px;
+  font-size:46px;
   font-weight:900;
   line-height:1;
+  text-transform:uppercase;
   background:linear-gradient(135deg,#c9a86a 0%,#f0d78a 50%,#c9a86a 100%);
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
   background-clip:text;
-  letter-spacing:-2px;
-  margin-bottom:4px;
+  letter-spacing:-1px;
+  margin-bottom:8px;
 }
 
 /* activated line */
@@ -138,39 +139,6 @@ body::before{
   margin-bottom:28px;
 }
 
-/* urgency */
-.urgency{
-  font-size:11px;
-  letter-spacing:2px;
-  text-transform:uppercase;
-  color:#c0392b;
-  margin-bottom:24px;
-  font-weight:700;
-}
-
-/* token */
-.token-wrap{
-  display:inline-block;
-  border:1px solid rgba(201,168,106,0.3);
-  border-radius:8px;
-  padding:8px 20px;
-  margin-bottom:24px;
-}
-.token-label{
-  font-size:9px;
-  letter-spacing:3px;
-  text-transform:uppercase;
-  color:rgba(255,255,255,0.2);
-  margin-bottom:4px;
-}
-.token-code{
-  font-size:16px;
-  letter-spacing:5px;
-  color:#c9a86a;
-  font-weight:700;
-  font-family:monospace;
-}
-
 /* CTA */
 .cta{
   width:100%;
@@ -183,20 +151,21 @@ body::before{
   font-weight:900;
   letter-spacing:2px;
   text-transform:uppercase;
-  cursor:pointer;
-  transition:all 0.2s;
   display:flex;
   align-items:center;
   justify-content:center;
   gap:10px;
   box-shadow:0 6px 30px rgba(201,168,106,0.3);
 }
-.cta:active{transform:scale(0.97);}
-.cta.confirmed{
-  background:rgba(40,167,69,0.9);
-  color:#fff;
-  box-shadow:0 6px 25px rgba(40,167,69,0.4);
-  pointer-events:none;
+
+/* small phones: la card non viene piu' tagliata */
+@media (max-height:620px){
+  body{overflow:auto;align-items:flex-start;padding:14px 0;}
+  .card{padding:26px 24px 24px;}
+  .brand{margin-bottom:20px;}
+  .check{margin-bottom:16px;}
+  .discount{font-size:40px;}
+  .location{margin-bottom:20px;}
 }
 </style>
 </head>
@@ -209,29 +178,24 @@ body::before{
 
   <div class="check">✓</div>
 
-  <div class="headline">Your secret offer</div>
-  <div class="discount">50%</div>
-  <div class="activated">off your second piece</div>
+  <div class="headline">Free 3-minute</div>
+  <div class="discount">Scarf<br>Styling</div>
+  <div class="activated">no purchase required</div>
 
   <div class="divider"></div>
 
-  <div class="applies">on <strong>foulards &amp; accessories</strong></div>
+  <div class="applies">
+    Discover <strong>6 ways</strong> to wear it<br>
+    Scopri <strong>6 modi</strong> per indossarlo<br>
+    Découvrez <strong>6 façons</strong> de le porter<br>
+    Descubre <strong>6 formas</strong> de llevarlo
+  </div>
   <div class="location">Via delle Muratte 88 · Rome</div>
 
-  <div class="urgency">⏳ Valid today until <span id="close-time">18:45</span></div>
-
-  <div class="token-wrap">
-    <div class="token-label">your code</div>
-    <div class="token-code" id="discount-code">BIBA-···</div>
-  </div>
-
-  <button id="cta-btn" class="cta" onclick="claimOffer()">
-    Show this screen at the counter
-  </button>
+  <div class="cta">Come inside</div>
 </div>
 
 <script>
-var CLOSE_HOUR = 18, CLOSE_MIN = 45;
 var GAS = 'https://script.google.com/macros/s/AKfycbx0Qd3zb39OjjG4BhOjX3Ph7h85WIYMGnBm9imZn3tSej54h4YWaAlFjfeIwG400_Jx/exec';
 
 // sparkle stars
@@ -264,46 +228,16 @@ function genToken(){
   return t;
 }
 
-// countdown
-(function(){
-  var el = document.getElementById('close-time');
-  var closeDate = new Date();
-  closeDate.setHours(CLOSE_HOUR, CLOSE_MIN, 0, 0);
-  var closeLabel = CLOSE_HOUR + ':' + (CLOSE_MIN < 10 ? '0' : '') + CLOSE_MIN;
-  function tick(){
-    var diff = Math.max(0, closeDate - new Date());
-    var hh = Math.floor(diff / 3600000);
-    var mm = Math.floor((diff % 3600000) / 60000);
-    if(el){
-      if(hh > 0)       el.textContent = closeLabel + ' — ' + hh + 'h ' + mm + 'min left';
-      else if(mm > 0)  el.textContent = closeLabel + ' — ' + mm + ' min left!';
-      else             el.textContent = closeLabel;
-    }
-  }
-  tick();
-  setInterval(tick, 60000);
-})();
-
-// token
-var token = sessionStorage.getItem('bibaVetrinaToken');
+// Token stabile per dispositivo (localStorage), una riga per visita (sessionStorage).
+// tipo 'vetrina_styling' per distinguerlo dalle righe della vecchia offerta -50%.
+var token = localStorage.getItem('bibaVetrinaToken');
 if(!token){
   token = genToken();
-  sessionStorage.setItem('bibaVetrinaToken', token);
-  logSheet(token, 'vetrina');
+  localStorage.setItem('bibaVetrinaToken', token);
 }
-var el = document.getElementById('discount-code');
-if(el) el.textContent = token;
-
-// CTA
-function claimOffer(){
-  if(sessionStorage.getItem('bibaCassaLogged')) return;
-  sessionStorage.setItem('bibaCassaLogged', '1');
-  logSheet(token, 'cassa');
-  var btn = document.getElementById('cta-btn');
-  if(btn){
-    btn.classList.add('confirmed');
-    btn.textContent = '✅  Discount ready — show to staff';
-  }
+if(!sessionStorage.getItem('bibaVisitLogged')){
+  sessionStorage.setItem('bibaVisitLogged', '1');
+  logSheet(token, 'vetrina_styling');
 }
 </script>
 </body>
