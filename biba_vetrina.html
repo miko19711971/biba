@@ -41,7 +41,7 @@ body::before{
   50%{opacity:0.6;transform:scale(1)}
 }
 
-/* schermata intera: niente card, niente bordi */
+/* schermata intera, tutto centrato verticalmente */
 .screen{
   position:relative;
   z-index:1;
@@ -51,31 +51,13 @@ body::before{
   display:flex;
   flex-direction:column;
   align-items:center;
+  justify-content:center;
   text-align:center;
+  gap:clamp(14px, 2.6vh, 30px);
   padding:
-    calc(env(safe-area-inset-top) + 26px)
+    calc(env(safe-area-inset-top) + 24px)
     clamp(18px, 6vw, 40px)
     calc(env(safe-area-inset-bottom) + 24px);
-}
-
-/* brand */
-.brand{
-  font-size:clamp(10px, 2.8vw, 13px);
-  letter-spacing:6px;
-  text-transform:uppercase;
-  color:rgba(201,168,106,0.5);
-}
-
-/* blocco centrale, si prende tutto lo spazio libero */
-.middle{
-  flex:1;
-  width:100%;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:clamp(10px, 2.2vh, 22px);
-  padding:clamp(12px, 3vh, 30px) 0;
 }
 
 /* badge */
@@ -98,11 +80,12 @@ body::before{
 
 /* headline */
 .headline{
-  font-size:clamp(12px, 3.4vw, 17px);
-  letter-spacing:3px;
+  font-size:clamp(19px, 5.6vw, 30px);
+  font-weight:700;
+  letter-spacing:2px;
   text-transform:uppercase;
-  color:rgba(255,255,255,0.45);
-  font-weight:400;
+  color:rgba(255,255,255,0.88);
+  margin-bottom:clamp(6px, 1.2vh, 12px);
 }
 
 /* hero */
@@ -120,10 +103,12 @@ body::before{
 
 /* sottotitolo */
 .activated{
-  font-size:clamp(11px, 3.2vw, 16px);
-  letter-spacing:3px;
+  font-size:clamp(16px, 4.8vw, 26px);
+  font-weight:700;
+  letter-spacing:2px;
   text-transform:uppercase;
-  color:rgba(255,255,255,0.45);
+  color:#c9a86a;
+  margin-top:clamp(8px, 1.4vh, 14px);
 }
 
 /* divider */
@@ -131,6 +116,7 @@ body::before{
   width:clamp(40px, 12vw, 64px);
   height:1px;
   background:rgba(201,168,106,0.3);
+  flex:none;
 }
 
 /* 4 lingue */
@@ -145,16 +131,7 @@ body::before{
   font-weight:700;
 }
 
-/* location */
-.location{
-  font-size:clamp(10px, 2.8vw, 13px);
-  letter-spacing:2px;
-  text-transform:uppercase;
-  color:rgba(255,255,255,0.28);
-  margin-bottom:clamp(14px, 2.5vh, 26px);
-}
-
-/* CTA a tutta larghezza, in fondo */
+/* CTA */
 .cta{
   width:100%;
   max-width:520px;
@@ -172,6 +149,7 @@ body::before{
   justify-content:center;
   box-shadow:0 6px 30px rgba(201,168,106,0.3);
   flex:none;
+  margin-top:clamp(4px, 1vh, 12px);
 }
 </style>
 </head>
@@ -180,28 +158,24 @@ body::before{
 <div class="stars" id="stars"></div>
 
 <div class="screen">
-  <div class="brand">Biba Boutique · Roma</div>
 
-  <div class="middle">
-    <div class="check">✦</div>
+  <div class="check">✦</div>
 
-    <div>
-      <div class="headline">Free 3-minute</div>
-      <div class="discount">Scarf<br>Styling</div>
-      <div class="activated">no purchase required</div>
-    </div>
-
-    <div class="divider"></div>
-
-    <div class="applies">
-      Discover <strong>6 ways</strong> to wear it<br>
-      Scopri <strong>6 modi</strong> per indossarlo<br>
-      Découvrez <strong>6 façons</strong> de le porter<br>
-      Descubre <strong>6 formas</strong> de llevarlo
-    </div>
+  <div>
+    <div class="headline">Free · 3 minutes</div>
+    <div class="discount">Scarf<br>Styling</div>
+    <div class="activated">no purchase required</div>
   </div>
 
-  <div class="location">Via delle Muratte 88 · Rome</div>
+  <div class="divider"></div>
+
+  <div class="applies">
+    Discover <strong>6 ways</strong> to wear it<br>
+    Scopri <strong>6 modi</strong> per indossarlo<br>
+    Découvrez <strong>6 façons</strong> de le porter<br>
+    Descubre <strong>6 formas</strong> de llevarlo
+  </div>
+
   <div class="cta">Come inside</div>
 </div>
 
