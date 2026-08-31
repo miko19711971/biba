@@ -387,7 +387,7 @@
   <video id="vid" playsinline loop autoplay muted>
     <source src="VIDEO_PREMIUM_SYNC_FIXED.mp4" type="video/mp4">
   </video>
-  <audio id="aud" src="VIDEO_PREMIUM_SYNC_FIXED.mp4" loop preload="none"></audio>
+  <audio id="aud" src="audio/scarf.mp3" loop preload="none"></audio>
 
   <!-- Paywall overlay -->
   <div id="paywall">
@@ -457,7 +457,7 @@ if (!fullAccess) {
     if (Date.now() >= expireAt) {
       clearInterval(previewTimer);
       document.getElementById('vid').pause();
-      document.getElementById('aud').pause();
+      audioPause();
       document.getElementById('paywall').classList.add('show');
       setTimeout(() => {
         document.getElementById('email-section').scrollIntoView({ behavior: 'smooth' });
@@ -472,15 +472,72 @@ vid.playbackRate   = 0.5;
 const aud          = document.getElementById('aud');
 aud.muted          = false;
 
-// Start audio on first user interaction (autoplay policy requires gesture)
-function firstAudioStart() {
-  aud.currentTime = vid.currentTime;
-  if (!vid.paused) aud.play().catch(() => {});
-  document.removeEventListener('click', firstAudioStart);
-  document.removeEventListener('touchstart', firstAudioStart);
+// ── Audio dalle casse del computer ───────────────────────────────────
+// Stesso principio delle bandiere: se la pagina e' servita da
+// audio_server.py, il suono esce dalle casse del computer del negozio
+// invece che dall'altoparlante del tablet. Fuori dal negozio (GitHub
+// Pages, Render, telefono del cliente) si torna all'audio del dispositivo.
+let pcAudio  = false;
+let pcPaused = false;
+
+function pcCall(path) {
+  return fetch(path).then(r => r.json()).catch(() => null);
 }
-document.addEventListener('click', firstAudioStart);
-document.addEventListener('touchstart', firstAudioStart);
+
+function audioPlay(t) {
+  if (pcAudio) {
+    if (pcPaused) { pcPaused = false; pcCall('/scarf/resume'); }
+    else          { pcCall('/scarf/play?start=' + (t === undefined ? vid.currentTime : t).toFixed(1)); }
+    return;
+  }
+  aud.play().catch(() => {});
+}
+
+function audioPause() {
+  if (pcAudio) { pcPaused = true; pcCall('/scarf/pause'); return; }
+  aud.pause();
+}
+
+function audioSeek(t) {
+  if (pcAudio) { pcPaused = false; pcCall('/scarf/play?start=' + t.toFixed(1)); return; }
+  aud.currentTime = t;
+}
+
+// Il server del negozio risponde su /ping: se c'e', l'audio va sulle casse.
+(function detectPcAudio() {
+  const ctrl = new AbortController();
+  const giveUp = setTimeout(() => ctrl.abort(), 1200);
+  fetch('/ping', { signal: ctrl.signal })
+    .then(r => r.ok ? r.json() : null)
+    .then(d => {
+      clearTimeout(giveUp);
+      if (d && d.server === 'biba-audio') {
+        pcAudio = true;
+        aud.pause();
+        aud.removeAttribute('src');   // niente doppio scaricamento sul tablet
+        if (!vid.paused) audioPlay(vid.currentTime);
+      } else {
+        fallbackAudio();
+      }
+    })
+    .catch(() => { clearTimeout(giveUp); fallbackAudio(); });
+})();
+
+function fallbackAudio() {
+  aud.preload = 'auto';
+  aud.load();
+}
+
+// Riserva sul dispositivo: iOS pretende un tocco vero per far partire
+// l'audio. Si riprova a ogni tocco finche' non parte davvero, invece di
+// bruciare il primo tentativo.
+function tryStartAudio() {
+  if (pcAudio || !aud.paused || vid.paused) return;
+  aud.currentTime = vid.currentTime;
+  aud.play().catch(() => {});
+}
+document.addEventListener('click', tryStartAudio);
+document.addEventListener('touchstart', tryStartAudio);
 
 const player       = document.getElementById('player');
 const playBtn      = document.getElementById('play-btn');
@@ -545,20 +602,25 @@ function flashOverlay(icon) {
   setTimeout(() => playOverlay.classList.remove('show'), 500);
 }
 
-vid.addEventListener('play',  () => { playBtn.textContent = '⏸'; flashOverlay('▶'); aud.play().catch(() => {}); });
-vid.addEventListener('pause', () => { playBtn.textContent = '▶'; flashOverlay('⏸'); aud.pause(); });
-vid.addEventListener('ended', () => { playBtn.textContent = '▶'; aud.pause(); });
+vid.addEventListener('play',  () => { playBtn.textContent = '⏸'; flashOverlay('▶'); audioPlay(); });
+vid.addEventListener('pause', () => { playBtn.textContent = '▶'; flashOverlay('⏸'); audioPause(); });
+vid.addEventListener('ended', () => { playBtn.textContent = '▶'; audioPause(); });
 
 // ── Progress bar click ───────────────────────────────────────────────
 progressWrap.addEventListener('click', e => {
   const r = progressWrap.getBoundingClientRect();
   const t = (e.clientX - r.left) / r.width * vid.duration;
   vid.currentTime = t;
-  aud.currentTime = t;
+  audioSeek(t);
 });
 
 // ── Volume mute toggle ───────────────────────────────────────────────
 volBtn.addEventListener('click', () => {
+  if (pcAudio) {
+    if (pcPaused) { pcPaused = false; pcCall('/scarf/resume'); volBtn.textContent = '🔊'; }
+    else          { pcPaused = true;  pcCall('/scarf/pause');  volBtn.textContent = '🔇'; }
+    return;
+  }
   aud.muted = !aud.muted;
   volBtn.textContent = aud.muted ? '🔇' : '🔊';
 });
@@ -567,7 +629,7 @@ volBtn.addEventListener('click', () => {
 replayBtn.addEventListener('click', () => {
   const k = getCurrentKnot();
   vid.currentTime = k.start;
-  aud.currentTime = k.start;
+  audioSeek(k.start);
   if (vid.paused) vid.play();
   ri.classList.remove('spinning');
   void ri.offsetWidth;
@@ -587,6 +649,14 @@ fsBtn.addEventListener('click', () => {
 });
 document.addEventListener('fullscreenchange', () => {
   if (!document.fullscreenElement) fsBtn.textContent = '⛶';
+});
+
+// Chiudendo o lasciando la pagina, le casse si fermano.
+window.addEventListener('pagehide', () => {
+  if (pcAudio) {
+    if (navigator.sendBeacon) navigator.sendBeacon('/scarf/stop');
+    else fetch('/scarf/stop', { keepalive: true }).catch(() => {});
+  }
 });
 
 // ── Keyboard shortcuts ───────────────────────────────────────────────

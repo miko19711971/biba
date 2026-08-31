@@ -4,7 +4,7 @@ import threading
 import pygame
 import mutagen.mp3
 from pydub import AudioSegment
-from flask import Flask, send_from_directory, jsonify
+from flask import Flask, send_from_directory, jsonify, request
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -22,6 +22,11 @@ VALID_LANGS = {
 VOLUME_BOOST_DB = 4.75  # +73% ampiezza (+20% tre volte)
 TMP_WAV = os.path.join(os.path.dirname(os.path.abspath(__file__)), '_boost.wav')
 
+# Traccia audio del video dei foulard: stesso principio delle bandiere,
+# il suono esce dalle casse del computer, non dal tablet.
+SCARF_MP3 = os.path.join(AUDIO_DIR, 'scarf.mp3')
+TMP_SCARF_WAV = os.path.join(os.path.dirname(os.path.abspath(__file__)), '_scarf_boost.wav')
+
 pygame.mixer.init()
 _lock = threading.Lock()
 
@@ -35,6 +40,69 @@ def boutique():
 @app.route('/audio/<path:filename>')
 def audio_file(filename):
     return send_from_directory(AUDIO_DIR, filename)
+
+@app.route('/ping')
+def ping():
+    """Serve alla pagina del video per capire se gira sul computer del negozio."""
+    return jsonify({'ok': True, 'server': 'biba-audio'})
+
+
+def _prepare_scarf(start=0.0):
+    """Prepara il wav della traccia foulard, gia' amplificata. In cache se parte da zero."""
+    if start <= 0 and os.path.exists(TMP_SCARF_WAV):
+        return TMP_SCARF_WAV
+    audio = AudioSegment.from_mp3(SCARF_MP3) + VOLUME_BOOST_DB
+    if start > 0:
+        audio = audio[int(start * 1000):]
+        tmp = TMP_SCARF_WAV.replace('.wav', '_seek.wav')
+        audio.export(tmp, format='wav')
+        return tmp
+    audio.export(TMP_SCARF_WAV, format='wav')
+    return TMP_SCARF_WAV
+
+
+@app.route('/scarf/play')
+def scarf_play():
+    if not os.path.exists(SCARF_MP3):
+        return jsonify({'error': 'scarf.mp3 non trovato'}), 404
+
+    try:
+        start = float(request.args.get('start', 0))
+    except ValueError:
+        start = 0.0
+
+    def _play():
+        with _lock:
+            pygame.mixer.music.stop()
+            try:
+                pygame.mixer.music.unload()
+            except AttributeError:
+                pass
+            pygame.mixer.music.load(_prepare_scarf(start))
+            # in loop: il video gira a 0,5x e dura il doppio della traccia
+            pygame.mixer.music.play(-1)
+
+    threading.Thread(target=_play, daemon=True).start()
+    return jsonify({'ok': True, 'track': 'scarf', 'start': round(start, 1)})
+
+
+@app.route('/scarf/pause')
+def scarf_pause():
+    pygame.mixer.music.pause()
+    return jsonify({'ok': True})
+
+
+@app.route('/scarf/resume')
+def scarf_resume():
+    pygame.mixer.music.unpause()
+    return jsonify({'ok': True})
+
+
+@app.route('/scarf/stop', methods=['GET', 'POST'])  # POST per sendBeacon
+def scarf_stop():
+    pygame.mixer.music.stop()
+    return jsonify({'ok': True})
+
 
 @app.route('/<path:filename>')
 def static_file(filename):
