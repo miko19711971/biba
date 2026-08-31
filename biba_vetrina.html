@@ -2,20 +2,21 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="theme-color" content="#0a0a0a"/>
 <title>Free Scarf Styling – Biba Boutique</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 
+html,body{background:#0a0a0a;}
+
 body{
   min-height:100vh;
-  background:#0a0a0a;
+  min-height:100dvh;
   font-family:'Arial', sans-serif;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  overflow:hidden;
   position:relative;
+  overflow-x:hidden;
 }
 
 /* ambient glow */
@@ -23,13 +24,14 @@ body::before{
   content:'';
   position:fixed;inset:0;
   background:
-    radial-gradient(circle at 20% 30%, rgba(201,168,106,0.10) 0%, transparent 50%),
-    radial-gradient(circle at 80% 70%, rgba(201,168,106,0.07) 0%, transparent 50%);
+    radial-gradient(circle at 20% 25%, rgba(201,168,106,0.12) 0%, transparent 55%),
+    radial-gradient(circle at 80% 75%, rgba(201,168,106,0.08) 0%, transparent 55%);
   pointer-events:none;
+  z-index:0;
 }
 
 /* sparkle stars */
-.stars{position:fixed;inset:0;pointer-events:none;overflow:hidden;}
+.stars{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0;}
 .star{
   position:absolute;width:2px;height:2px;border-radius:50%;
   background:#c9a86a;opacity:0;animation:twinkle 3s infinite;
@@ -39,39 +41,55 @@ body::before{
   50%{opacity:0.6;transform:scale(1)}
 }
 
-/* card */
-.card{
+/* schermata intera: niente card, niente bordi */
+.screen{
   position:relative;
-  width:92%;max-width:380px;
-  text-align:center;
-  padding:36px 28px 32px;
   z-index:1;
-  border:1px solid rgba(201,168,106,0.15);
-  border-radius:20px;
-  background:rgba(255,255,255,0.02);
-  backdrop-filter:blur(4px);
+  min-height:100vh;
+  min-height:100dvh;
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  text-align:center;
+  padding:
+    calc(env(safe-area-inset-top) + 26px)
+    clamp(18px, 6vw, 40px)
+    calc(env(safe-area-inset-bottom) + 24px);
 }
 
 /* brand */
 .brand{
-  font-size:10px;
+  font-size:clamp(10px, 2.8vw, 13px);
   letter-spacing:6px;
   text-transform:uppercase;
   color:rgba(201,168,106,0.5);
-  margin-bottom:28px;
 }
 
-/* checkmark */
+/* blocco centrale, si prende tutto lo spazio libero */
+.middle{
+  flex:1;
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:clamp(10px, 2.2vh, 22px);
+  padding:clamp(12px, 3vh, 30px) 0;
+}
+
+/* badge */
 .check{
-  width:56px;height:56px;
+  width:clamp(56px, 15vw, 78px);
+  height:clamp(56px, 15vw, 78px);
   background:rgba(201,168,106,0.10);
   border:2px solid rgba(201,168,106,0.60);
   border-radius:50%;
   display:flex;align-items:center;justify-content:center;
-  margin:0 auto 20px;
-  font-size:26px;
+  font-size:clamp(26px, 7vw, 36px);
   color:#c9a86a;
   animation:popIn 0.5s cubic-bezier(0.175,0.885,0.32,1.275) both;
+  flex:none;
 }
 @keyframes popIn{
   from{transform:scale(0);opacity:0}
@@ -80,51 +98,47 @@ body::before{
 
 /* headline */
 .headline{
-  font-size:13px;
+  font-size:clamp(12px, 3.4vw, 17px);
   letter-spacing:3px;
   text-transform:uppercase;
   color:rgba(255,255,255,0.45);
-  margin-bottom:8px;
   font-weight:400;
 }
 
 /* hero */
 .discount{
-  font-size:46px;
+  font-size:clamp(46px, 16.5vw, 104px);
   font-weight:900;
-  line-height:1;
+  line-height:0.98;
   text-transform:uppercase;
   background:linear-gradient(135deg,#c9a86a 0%,#f0d78a 50%,#c9a86a 100%);
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
   background-clip:text;
   letter-spacing:-1px;
-  margin-bottom:8px;
 }
 
-/* activated line */
+/* sottotitolo */
 .activated{
-  font-size:13px;
+  font-size:clamp(11px, 3.2vw, 16px);
   letter-spacing:3px;
   text-transform:uppercase;
   color:rgba(255,255,255,0.45);
-  margin-bottom:20px;
 }
 
 /* divider */
 .divider{
-  width:40px;height:1px;
+  width:clamp(40px, 12vw, 64px);
+  height:1px;
   background:rgba(201,168,106,0.3);
-  margin:0 auto 18px;
 }
 
-/* applies-to */
+/* 4 lingue */
 .applies{
-  font-size:14px;
-  color:rgba(255,255,255,0.75);
-  letter-spacing:1px;
-  line-height:1.7;
-  margin-bottom:6px;
+  font-size:clamp(15px, 4.3vw, 22px);
+  color:rgba(255,255,255,0.78);
+  letter-spacing:0.5px;
+  line-height:1.8;
 }
 .applies strong{
   color:#c9a86a;
@@ -133,40 +147,31 @@ body::before{
 
 /* location */
 .location{
-  font-size:10px;
+  font-size:clamp(10px, 2.8vw, 13px);
   letter-spacing:2px;
   text-transform:uppercase;
-  color:rgba(255,255,255,0.2);
-  margin-bottom:28px;
+  color:rgba(255,255,255,0.28);
+  margin-bottom:clamp(14px, 2.5vh, 26px);
 }
 
-/* CTA */
+/* CTA a tutta larghezza, in fondo */
 .cta{
   width:100%;
-  padding:16px 20px;
+  max-width:520px;
+  padding:clamp(16px, 2.4vh, 22px) 20px;
   background:#c9a86a;
   color:#0a0a0a;
   border:none;
   border-radius:50px;
-  font-size:12px;
+  font-size:clamp(13px, 3.6vw, 17px);
   font-weight:900;
-  letter-spacing:2px;
+  letter-spacing:3px;
   text-transform:uppercase;
   display:flex;
   align-items:center;
   justify-content:center;
-  gap:10px;
   box-shadow:0 6px 30px rgba(201,168,106,0.3);
-}
-
-/* small phones: la card non viene piu' tagliata */
-@media (max-height:620px){
-  body{overflow:auto;align-items:flex-start;padding:14px 0;}
-  .card{padding:26px 24px 24px;}
-  .brand{margin-bottom:20px;}
-  .check{margin-bottom:16px;}
-  .discount{font-size:40px;}
-  .location{margin-bottom:20px;}
+  flex:none;
 }
 </style>
 </head>
@@ -174,25 +179,29 @@ body::before{
 
 <div class="stars" id="stars"></div>
 
-<div class="card">
+<div class="screen">
   <div class="brand">Biba Boutique · Roma</div>
 
-  <div class="check">✦</div>
+  <div class="middle">
+    <div class="check">✦</div>
 
-  <div class="headline">Free 3-minute</div>
-  <div class="discount">Scarf<br>Styling</div>
-  <div class="activated">no purchase required</div>
+    <div>
+      <div class="headline">Free 3-minute</div>
+      <div class="discount">Scarf<br>Styling</div>
+      <div class="activated">no purchase required</div>
+    </div>
 
-  <div class="divider"></div>
+    <div class="divider"></div>
 
-  <div class="applies">
-    Discover <strong>6 ways</strong> to wear it<br>
-    Scopri <strong>6 modi</strong> per indossarlo<br>
-    Découvrez <strong>6 façons</strong> de le porter<br>
-    Descubre <strong>6 formas</strong> de llevarlo
+    <div class="applies">
+      Discover <strong>6 ways</strong> to wear it<br>
+      Scopri <strong>6 modi</strong> per indossarlo<br>
+      Découvrez <strong>6 façons</strong> de le porter<br>
+      Descubre <strong>6 formas</strong> de llevarlo
+    </div>
   </div>
-  <div class="location">Via delle Muratte 88 · Rome</div>
 
+  <div class="location">Via delle Muratte 88 · Rome</div>
   <div class="cta">Come inside</div>
 </div>
 
