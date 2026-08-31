@@ -41,10 +41,31 @@ def boutique():
 def audio_file(filename):
     return send_from_directory(AUDIO_DIR, filename)
 
+@app.route('/video')
+def video_page():
+    """Indirizzo corto per il tablet: niente trattini bassi da digitare."""
+    return send_from_directory(BASE_DIR, 'scarf_player.html')
+
+
+@app.route('/tablet')
+def tablet_qr():
+    """Pagina col QR da inquadrare per aprire il video sul tablet."""
+    return send_from_directory(BASE_DIR, 'qr_tablet.html')
+
+
+def _lan_ip():
+    try:
+        return socket.gethostbyname(socket.gethostname())
+    except Exception:
+        return '127.0.0.1'
+
+
 @app.route('/ping')
 def ping():
-    """Serve alla pagina del video per capire se gira sul computer del negozio."""
-    return jsonify({'ok': True, 'server': 'biba-audio'})
+    """Serve alla pagina del video per capire se gira sul computer del negozio.
+    Restituisce anche l'IP di rete, cosi' il QR per il tablet si aggiorna da solo
+    quando l'indirizzo del computer cambia."""
+    return jsonify({'ok': True, 'server': 'biba-audio', 'ip': _lan_ip(), 'port': 5000})
 
 
 def _prepare_scarf(start=0.0):

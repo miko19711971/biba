@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biba · Apri il video sul tablet</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#0a0a0a;color:#fff;font-family:Arial,sans-serif;min-height:100vh;
+       display:flex;align-items:center;justify-content:center;padding:24px}
+  .card{text-align:center;max-width:460px;width:100%}
+  .brand{font-size:11px;letter-spacing:6px;text-transform:uppercase;
+         color:rgba(201,168,106,0.55);margin-bottom:10px}
+  h1{font-size:22px;font-weight:700;letter-spacing:1px;margin-bottom:6px}
+  .sub{font-size:13px;color:rgba(255,255,255,0.5);line-height:1.6;margin-bottom:26px}
+  #qrcode{display:flex;justify-content:center;margin-bottom:22px}
+  #qrcode img,#qrcode canvas{background:#fff;padding:14px;border-radius:8px}
+  .url{font-family:monospace;font-size:15px;color:#c9a86a;word-break:break-all;
+       border:1px solid rgba(201,168,106,0.3);border-radius:8px;padding:12px 14px;margin-bottom:18px}
+  .note{font-size:12px;color:rgba(255,255,255,0.35);line-height:1.7}
+  .err{color:#e07a6a;font-size:14px;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="brand">Biba Boutique</div>
+  <h1>Video foulard sul tablet</h1>
+  <div class="sub">Inquadra questo codice con la fotocamera dell'iPad.<br>
+    L'audio uscira' dalle casse del computer.</div>
+
+  <div id="qrcode"></div>
+  <div class="url" id="url">…</div>
+
+  <div class="note">
+    L'indirizzo si aggiorna da solo se cambia l'IP del computer.<br>
+    Sull'iPad: tasto condividi → "Aggiungi a Home" per averlo come icona.
+  </div>
+</div>
+
+<script>
+fetch('/ping')
+  .then(r => r.json())
+  .then(d => {
+    const url = 'http://' + d.ip + ':' + (d.port || 5000) + '/video';
+    document.getElementById('url').textContent = url;
+    new QRCode(document.getElementById('qrcode'), {
+      text: url, width: 240, height: 240,
+      colorDark: '#0a0a0a', colorLight: '#ffffff',
+      correctLevel: QRCode.CorrectLevel.H
+    });
+  })
+  .catch(() => {
+    document.getElementById('url').outerHTML =
+      '<div class="err">Il server audio non risponde.<br>Avvia AVVIA_SERVER.bat e ricarica questa pagina.</div>';
+  });
+</script>
+</body>
+</html>

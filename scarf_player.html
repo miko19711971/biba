@@ -449,11 +449,12 @@ if (urlParams.get('access') === ACCESS_TOKEN) {
   localStorage.setItem('biba_access', ACCESS_TOKEN);
 }
 const fullAccess = localStorage.getItem('biba_access') === ACCESS_TOKEN;
+let previewTimer = null;
 
 if (!fullAccess) {
   // Start 10-minute preview countdown
   const expireAt = Date.now() + 10 * 60 * 1000;
-  const previewTimer = setInterval(() => {
+  previewTimer = setInterval(() => {
     if (Date.now() >= expireAt) {
       clearInterval(previewTimer);
       document.getElementById('vid').pause();
@@ -513,6 +514,10 @@ function audioSeek(t) {
       clearTimeout(giveUp);
       if (d && d.server === 'biba-audio') {
         pcAudio = true;
+        // Servita dal computer del negozio: accesso pieno senza ?access=,
+        // cosi' sul tablet basta scrivere l'indirizzo nudo.
+        localStorage.setItem('biba_access', ACCESS_TOKEN);
+        if (previewTimer) { clearInterval(previewTimer); previewTimer = null; }
         aud.pause();
         aud.removeAttribute('src');   // niente doppio scaricamento sul tablet
         if (!vid.paused) audioPlay(vid.currentTime);
@@ -589,7 +594,12 @@ vid.addEventListener('timeupdate', () => {
 
 // ── Play / Pause ─────────────────────────────────────────────────────
 function togglePlay() {
-  if (vid.paused) { vid.play(); }
+  if (vid.paused) {
+    vid.play();
+    // iOS fa partire l'audio solo dentro un tocco vero: lo chiediamo qui,
+    // non nell'evento 'play' del video, che arriva dopo e viene bloccato.
+    if (!pcAudio && aud.paused) { aud.currentTime = vid.currentTime; aud.play().catch(() => {}); }
+  }
   else            { vid.pause(); }
 }
 
@@ -619,6 +629,13 @@ volBtn.addEventListener('click', () => {
   if (pcAudio) {
     if (pcPaused) { pcPaused = false; pcCall('/scarf/resume'); volBtn.textContent = '🔊'; }
     else          { pcPaused = true;  pcCall('/scarf/pause');  volBtn.textContent = '🔇'; }
+    return;
+  }
+  if (aud.paused) {
+    // primo tocco: qui l'audio parte davvero, prima non partiva mai
+    aud.muted = false;
+    aud.currentTime = vid.currentTime;
+    aud.play().then(() => { volBtn.textContent = '🔊'; }).catch(() => {});
     return;
   }
   aud.muted = !aud.muted;
