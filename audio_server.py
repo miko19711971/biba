@@ -1,6 +1,8 @@
+import atexit
 import os
 import socket
 import threading
+import time
 import pygame
 import mutagen.mp3
 from pydub import AudioSegment
@@ -29,6 +31,72 @@ TMP_SCARF_WAV = os.path.join(os.path.dirname(os.path.abspath(__file__)), '_scarf
 
 pygame.mixer.init()
 _lock = threading.Lock()
+
+
+# ============================================================
+# RADIO IN SOTTOFONDO: muta mentre parla la guida
+# ============================================================
+# Sul PC del negozio c'e' sempre la radio accesa e copriva la guida.
+# Mentre suona una guida (o il video dei foulard) si mettono in muto tutti
+# gli altri programmi che fanno suono (Chrome, app radio...), poi si
+# riaccendono SOLO quelli mutati qui: chi era gia' muto resta muto.
+# Se pycaw non c'e' la guida suona lo stesso, solo senza mutare la radio.
+try:
+    import comtypes
+    from pycaw.pycaw import AudioUtilities
+except ImportError:
+    AudioUtilities = None
+
+_mutati = set()          # pid dei programmi mutati da noi
+_mute_lock = threading.Lock()
+_turno = 0               # cresce a ogni nuova guida: solo l'ultima riaccende la radio
+
+
+def _sessioni_altri():
+    comtypes.CoInitialize()  # ogni thread di Flask ne ha bisogno per parlare con Windows
+    for s in AudioUtilities.GetAllSessions():
+        if s.Process and s.ProcessId != os.getpid():
+            yield s
+
+
+def silenzia_radio():
+    if AudioUtilities is None:
+        return
+    with _mute_lock:
+        try:
+            for s in _sessioni_altri():
+                vol = s.SimpleAudioVolume
+                if not vol.GetMute():
+                    vol.SetMute(1, None)
+                    _mutati.add(s.ProcessId)
+        except Exception as e:
+            print('Radio: muto non riuscito:', e)
+
+
+def riaccendi_radio():
+    if AudioUtilities is None:
+        return
+    with _mute_lock:
+        try:
+            for s in _sessioni_altri():
+                if s.ProcessId in _mutati:
+                    s.SimpleAudioVolume.SetMute(0, None)
+        except Exception as e:
+            print('Radio: riaccensione non riuscita:', e)
+        _mutati.clear()
+
+
+def _riaccendi_a_fine_guida(turno):
+    """Aspetta che la guida finisca e riaccende la radio, se nel frattempo
+    nessuno ha premuto un'altra bandiera (quella ci pensa da sola)."""
+    time.sleep(0.5)  # lascia partire la riproduzione
+    while pygame.mixer.music.get_busy():
+        time.sleep(0.2)
+    if turno == _turno:
+        riaccendi_radio()
+
+
+atexit.register(riaccendi_radio)  # chiudendo il server la radio non resta muta
 
 
 @app.route('/')
@@ -100,6 +168,9 @@ def scarf_play():
             except AttributeError:
                 pass
             pygame.mixer.music.load(_prepare_scarf(start))
+            global _turno
+            _turno += 1  # una guida partita prima non deve riaccendere la radio
+            silenzia_radio()
             # in loop: il video gira a 0,5x e dura il doppio della traccia
             pygame.mixer.music.play(-1)
 
@@ -110,11 +181,13 @@ def scarf_play():
 @app.route('/scarf/pause')
 def scarf_pause():
     pygame.mixer.music.pause()
+    riaccendi_radio()
     return jsonify({'ok': True})
 
 
 @app.route('/scarf/resume')
 def scarf_resume():
+    silenzia_radio()
     pygame.mixer.music.unpause()
     return jsonify({'ok': True})
 
@@ -122,6 +195,7 @@ def scarf_resume():
 @app.route('/scarf/stop', methods=['GET', 'POST'])  # POST per sendBeacon
 def scarf_stop():
     pygame.mixer.music.stop()
+    riaccendi_radio()
     return jsonify({'ok': True})
 
 
@@ -148,8 +222,13 @@ def play_on_laptop(lang):
                 pass
             audio = AudioSegment.from_mp3(path) + VOLUME_BOOST_DB
             audio.export(TMP_WAV, format='wav')
+            global _turno
+            _turno += 1
+            silenzia_radio()
             pygame.mixer.music.load(TMP_WAV)
             pygame.mixer.music.play()
+            turno = _turno
+        _riaccendi_a_fine_guida(turno)
 
     threading.Thread(target=_play, daemon=True).start()
 
