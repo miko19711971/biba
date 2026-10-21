@@ -117,6 +117,22 @@ body::before{
   color:#ffd23f;
   margin-top:clamp(8px, 1.4vh, 14px);
 }
+
+/* invito a toccare: la voce parte solo dopo un tocco */
+.tap{
+  font-size:clamp(26px, 8vw, 46px);
+  font-weight:900;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  color:#ff1f1f;
+  text-shadow:0 0 16px rgba(255,31,31,0.7);
+  animation:tapPulse 1s ease-in-out infinite;
+}
+.tap.hidden{visibility:hidden;animation:none;}
+@keyframes tapPulse{
+  0%,100%{transform:scale(1)}
+  50%{transform:scale(1.08)}
+}
 </style>
 </head>
 <body>
@@ -124,6 +140,8 @@ body::before{
 <div class="stars" id="stars"></div>
 
 <div class="screen">
+
+  <div class="tap" id="tap">&#x1f50a; <span data-t="tap"></span></div>
 
   <div class="check">✦</div>
 
@@ -139,15 +157,15 @@ body::before{
 var GAS = 'https://script.google.com/macros/s/AKfycbx0Qd3zb39OjjG4BhOjX3Ph7h85WIYMGnBm9imZn3tSej54h4YWaAlFjfeIwG400_Jx/exec';
 
 var I18N = {
-  en:{headline:'Special offer', hero:'Buy 2<br>3rd free', sub:'in store now',
+  en:{headline:'Special offer', hero:'Buy 2<br>3rd free', sub:'in store now', tap:'Tap the screen',
       voice:'Special offer at Biba Boutique. Buy two items and get the third one free. Come inside!'},
-  it:{headline:'Offerta speciale', hero:'Compri 2<br>3° gratis', sub:'in negozio adesso',
+  it:{headline:'Offerta speciale', hero:'Compri 2<br>3° gratis', sub:'in negozio adesso', tap:'Tocca lo schermo',
       voice:'Offerta speciale da Biba Boutique. Compra due articoli e il terzo è in regalo. Entra a trovarci!'},
-  fr:{headline:'Offre spéciale', hero:'2 achetés<br>3e offert', sub:'en boutique maintenant',
+  fr:{headline:'Offre spéciale', hero:'2 achetés<br>3e offert', sub:'en boutique maintenant', tap:'Touchez l\'écran',
       voice:'Offre spéciale chez Biba Boutique. Achetez deux articles et le troisième est offert. Entrez nous voir !'},
-  de:{headline:'Sonderangebot', hero:'Kauf 2<br>3. gratis', sub:'jetzt im Laden',
+  de:{headline:'Sonderangebot', hero:'Kauf 2<br>3. gratis', sub:'jetzt im Laden', tap:'Bildschirm antippen',
       voice:'Sonderangebot bei Biba Boutique. Kaufen Sie zwei Artikel, und der dritte ist gratis. Kommen Sie herein!'},
-  es:{headline:'Oferta especial', hero:'Compra 2<br>3º gratis', sub:'ya en tienda',
+  es:{headline:'Oferta especial', hero:'Compra 2<br>3º gratis', sub:'ya en tienda', tap:'Toca la pantalla',
       voice:'Oferta especial en Biba Boutique. Compra dos artículos y el tercero es gratis. ¡Entra a vernos!'}
 };
 
@@ -219,6 +237,7 @@ document.addEventListener('pointerdown', function(){
   if(spokenByTouch) return;
   spokenByTouch = true;
   speak();
+  document.getElementById('tap').classList.add('hidden');
 });
 
 // sparkle stars
