@@ -43,6 +43,8 @@ body::before{
 
 /* schermata intera, tutto centrato verticalmente */
 .screen{
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
   position:relative;
   z-index:1;
   min-height:100vh;
@@ -205,10 +207,12 @@ if('speechSynthesis' in window){
 function speak(){
   if(!('speechSynthesis' in window)) return;
   try{
-    speechSynthesis.cancel();
+    if(speechSynthesis.speaking || speechSynthesis.pending) speechSynthesis.cancel();
+    refreshVoice();
     var u = new SpeechSynthesisUtterance(t('voice'));
     if(pick) u.voice = pick;
     u.lang = pick ? pick.lang : lang;
+    speechSynthesis.resume();
     speechSynthesis.speak(u);
   }catch(e){}
 }
@@ -229,13 +233,9 @@ function setLang(newLang){
   setLang(I18N[l] ? l : 'en');
 })();
 
-// I browser parlano solo dopo un tocco: si prova subito (alcuni Android lo permettono),
-// poi il primo tocco in un punto qualunque della pagina fa partire la voce.
-speak();
-var spokenByTouch = false;
-document.addEventListener('pointerdown', function(){
-  if(spokenByTouch) return;
-  spokenByTouch = true;
+// I telefoni fanno parlare la pagina solo dopo un tocco "completo" (dito alzato):
+// pointerdown/touchstart non bastano, serve click. Ogni tocco ripete il messaggio.
+document.querySelector('.screen').addEventListener('click', function(){
   speak();
   document.getElementById('tap').classList.add('hidden');
 });
