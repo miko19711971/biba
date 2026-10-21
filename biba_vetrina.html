@@ -55,7 +55,7 @@ body::before{
   text-align:center;
   gap:clamp(14px, 2.6vh, 30px);
   padding:
-    calc(env(safe-area-inset-top) + 24px)
+    calc(env(safe-area-inset-top) + 56px)
     clamp(18px, 6vw, 40px)
     calc(env(safe-area-inset-bottom) + 24px);
 }
@@ -90,7 +90,7 @@ body::before{
 
 /* hero */
 .discount{
-  font-size:clamp(46px, 16.5vw, 104px);
+  font-size:clamp(40px, 13.5vw, 96px);
   font-weight:900;
   line-height:0.98;
   text-transform:uppercase;
@@ -119,17 +119,55 @@ body::before{
   flex:none;
 }
 
-/* 4 lingue */
+/* messaggio nella lingua del cliente */
 .applies{
-  font-size:clamp(15px, 4.3vw, 22px);
+  font-size:clamp(17px, 5vw, 24px);
   color:rgba(255,255,255,0.78);
   letter-spacing:0.5px;
-  line-height:1.8;
+  line-height:1.6;
 }
 .applies strong{
   color:#c9a86a;
   font-weight:700;
 }
+
+/* ascolta */
+.listen{
+  background:transparent;
+  border:2px solid #c9a86a;
+  color:#c9a86a;
+  border-radius:50px;
+  padding:12px 26px;
+  font-size:clamp(14px, 3.8vw, 18px);
+  font-weight:700;
+  letter-spacing:1px;
+  cursor:pointer;
+  animation:pulse 2s infinite;
+}
+.listen.done{animation:none;opacity:0.8;}
+@keyframes pulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(201,168,106,0.5)}
+  50%{box-shadow:0 0 0 12px rgba(201,168,106,0)}
+}
+
+/* lingue, come nelle guide */
+.lang-row{
+  position:fixed;
+  top:calc(env(safe-area-inset-top) + 10px);
+  left:0;right:0;
+  display:flex;justify-content:center;gap:6px;
+  z-index:2;
+}
+.lang-btn{
+  background:transparent;
+  border:1px solid rgba(201,168,106,0.35);
+  color:rgba(255,255,255,0.6);
+  border-radius:14px;
+  padding:5px 10px;
+  font-size:12px;font-weight:700;letter-spacing:1px;
+  cursor:pointer;
+}
+.lang-btn.active{background:rgba(201,168,106,0.18);color:#c9a86a;border-color:#c9a86a;}
 
 /* CTA */
 .cta{
@@ -157,30 +195,139 @@ body::before{
 
 <div class="stars" id="stars"></div>
 
+<div class="lang-row" id="langRow">
+  <button class="lang-btn" data-lang="en">EN</button>
+  <button class="lang-btn" data-lang="it">IT</button>
+  <button class="lang-btn" data-lang="fr">FR</button>
+  <button class="lang-btn" data-lang="de">DE</button>
+  <button class="lang-btn" data-lang="es">ES</button>
+</div>
+
 <div class="screen">
 
   <div class="check">✦</div>
 
   <div>
-    <div class="headline">Special offer</div>
-    <div class="discount">Buy 2<br>3rd free</div>
-    <div class="activated">in store now</div>
+    <div class="headline" data-t="headline"></div>
+    <div class="discount" data-t="hero"></div>
+    <div class="activated" data-t="sub"></div>
   </div>
 
   <div class="divider"></div>
 
-  <div class="applies">
-    Buy <strong>2 items</strong>, get the <strong>3rd free</strong><br>
-    Compra <strong>2 articoli</strong>, il <strong>3° è in regalo</strong><br>
-    Achetez <strong>2 articles</strong>, le <strong>3e offert</strong><br>
-    Compra <strong>2 artículos</strong>, el <strong>3º gratis</strong>
-  </div>
+  <div class="applies" data-t="line"></div>
 
-  <div class="cta">Come inside</div>
+  <button class="listen" id="btnListen" onclick="speak()">&#x1f50a; <span data-t="listen"></span></button>
+
+  <div class="cta" data-t="cta"></div>
 </div>
 
 <script>
 var GAS = 'https://script.google.com/macros/s/AKfycbx0Qd3zb39OjjG4BhOjX3Ph7h85WIYMGnBm9imZn3tSej54h4YWaAlFjfeIwG400_Jx/exec';
+
+var I18N = {
+  en:{headline:'Special offer', hero:'Buy 2<br>3rd free', sub:'in store now',
+      line:'Buy <strong>2 items</strong>,<br>get the <strong>3rd free</strong>',
+      cta:'Come inside', listen:'Tap to listen',
+      voice:'Special offer at Biba Boutique. Buy two items and get the third one free. Come inside!'},
+  it:{headline:'Offerta speciale', hero:'Compri 2<br>3° gratis', sub:'in negozio adesso',
+      line:'Compra <strong>2 articoli</strong>,<br>il <strong>3° è in regalo</strong>',
+      cta:'Entra', listen:'Tocca per ascoltare',
+      voice:'Offerta speciale da Biba Boutique. Compra due articoli e il terzo è in regalo. Entra a trovarci!'},
+  fr:{headline:'Offre spéciale', hero:'2 achetés<br>3e offert', sub:'en boutique maintenant',
+      line:'Achetez <strong>2 articles</strong>,<br>le <strong>3e est offert</strong>',
+      cta:'Entrez', listen:'Touchez pour écouter',
+      voice:'Offre spéciale chez Biba Boutique. Achetez deux articles et le troisième est offert. Entrez nous voir !'},
+  de:{headline:'Sonderangebot', hero:'Kauf 2<br>3. gratis', sub:'jetzt im Laden',
+      line:'Kaufen Sie <strong>2 Artikel</strong>,<br>der <strong>3. ist gratis</strong>',
+      cta:'Kommen Sie herein', listen:'Zum Anhören tippen',
+      voice:'Sonderangebot bei Biba Boutique. Kaufen Sie zwei Artikel, und der dritte ist gratis. Kommen Sie herein!'},
+  es:{headline:'Oferta especial', hero:'Compra 2<br>3º gratis', sub:'ya en tienda',
+      line:'Compra <strong>2 artículos</strong>,<br>el <strong>3º es gratis</strong>',
+      cta:'Entra', listen:'Toca para escuchar',
+      voice:'Oferta especial en Biba Boutique. Compra dos artículos y el tercero es gratis. ¡Entra a vernos!'}
+};
+
+var lang = 'en';
+function t(key){ return (I18N[lang]||I18N.en)[key] || I18N.en[key] || ''; }
+
+/* Voce: stesso sistema delle guide check-in (voci del telefono, speechSynthesis) */
+var VOICE_PREFS = {
+  en:['Samantha','Google US English','Google UK English Female','Microsoft Aria Online (Natural)'],
+  it:['Alice','Eloisa','Google italiano','Microsoft Elsa Online (Natural)','Microsoft Isabella Online (Natural)'],
+  fr:['Amelie','Thomas','Google français','Microsoft Denise Online (Natural)','Microsoft Vivienne Online (Natural)'],
+  de:['Anna','Markus','Google Deutsch','Microsoft Katja Online (Natural)','Microsoft Conrad Online (Natural)'],
+  es:['Monica','Jorge','Paulina','Google español','Microsoft Alvaro Online (Natural)']
+};
+
+var pick = null;
+
+function selectVoice(){
+  if(!('speechSynthesis' in window)) return null;
+  var all = speechSynthesis.getVoices() || [];
+  var prefs = VOICE_PREFS[lang] || [];
+  for(var i = 0; i < prefs.length; i++){
+    var name = prefs[i].toLowerCase();
+    var v = all.find(function(x){ return (x.name||'').toLowerCase() === name; });
+    if(v) return v;
+  }
+  return all.find(function(x){ return (x.lang||'').toLowerCase().indexOf(lang) === 0; }) || null;
+}
+
+function refreshVoice(){ pick = selectVoice(); }
+
+if('speechSynthesis' in window){
+  refreshVoice();
+  speechSynthesis.onvoiceschanged = refreshVoice;
+}
+
+function speak(){
+  if(!('speechSynthesis' in window)) return;
+  try{
+    speechSynthesis.cancel();
+    var u = new SpeechSynthesisUtterance(t('voice'));
+    if(pick) u.voice = pick;
+    u.lang = pick ? pick.lang : lang;
+    speechSynthesis.speak(u);
+    document.getElementById('btnListen').classList.add('done');
+  }catch(e){}
+}
+
+function setLang(newLang){
+  lang = I18N[newLang] ? newLang : 'en';
+  document.documentElement.lang = lang;
+  document.querySelectorAll('.lang-btn').forEach(function(b){
+    b.classList.toggle('active', b.dataset.lang === lang);
+  });
+  document.querySelectorAll('[data-t]').forEach(function(el){
+    el.innerHTML = t(el.getAttribute('data-t'));
+  });
+  refreshVoice();
+}
+
+document.querySelectorAll('.lang-btn').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    setLang(btn.dataset.lang);
+    speak();
+  });
+});
+
+// Lingua: ?lang=xx, altrimenti quella del telefono, altrimenti inglese
+(function(){
+  var p = new URLSearchParams(location.search).get('lang');
+  var l = (p || navigator.language || 'en').slice(0,2).toLowerCase();
+  setLang(I18N[l] ? l : 'en');
+})();
+
+// I browser parlano solo dopo un tocco: si prova subito (alcuni Android lo permettono),
+// poi il primo tocco in un punto qualunque della pagina fa partire la voce.
+speak();
+var spokenByTouch = false;
+document.addEventListener('pointerdown', function(e){
+  if(spokenByTouch || e.target.closest('button')) return;
+  spokenByTouch = true;
+  speak();
+});
 
 // sparkle stars
 (function(){
@@ -201,7 +348,7 @@ function logSheet(token, tipo){
     fetch(GAS,{
       method:'POST', mode:'no-cors',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({token:token, tipo:tipo, timestamp:new Date().toISOString()})
+      body:JSON.stringify({token:token, tipo:tipo, lang:lang, timestamp:new Date().toISOString()})
     });
   }catch(e){}
 }
