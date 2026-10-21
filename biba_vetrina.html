@@ -174,47 +174,32 @@ var I18N = {
 var lang = 'en';
 function t(key){ return (I18N[lang]||I18N.en)[key] || I18N.en[key] || ''; }
 
-/* Voce: stesso sistema delle guide check-in (voci del telefono, speechSynthesis) */
-var VOICE_PREFS = {
-  en:['Samantha','Google US English','Google UK English Female','Microsoft Aria Online (Natural)'],
-  it:['Alice','Eloisa','Google italiano','Microsoft Elsa Online (Natural)','Microsoft Isabella Online (Natural)'],
-  fr:['Amelie','Thomas','Google français','Microsoft Denise Online (Natural)','Microsoft Vivienne Online (Natural)'],
-  de:['Anna','Markus','Google Deutsch','Microsoft Katja Online (Natural)','Microsoft Conrad Online (Natural)'],
-  es:['Monica','Jorge','Paulina','Google español','Microsoft Alvaro Online (Natural)']
-};
+/* Voce: file MP3 per lingua (audio/vetrina-xx.mp3, voci Microsoft Neural come il totem).
+   La voce del telefono (speechSynthesis) su molti telefoni non parlava: resta solo come riserva. */
+var audio = null;
 
-var pick = null;
-
-function selectVoice(){
-  if(!('speechSynthesis' in window)) return null;
-  var all = speechSynthesis.getVoices() || [];
-  var prefs = VOICE_PREFS[lang] || [];
-  for(var i = 0; i < prefs.length; i++){
-    var name = prefs[i].toLowerCase();
-    var v = all.find(function(x){ return (x.name||'').toLowerCase() === name; });
-    if(v) return v;
-  }
-  return all.find(function(x){ return (x.lang||'').toLowerCase().indexOf(lang) === 0; }) || null;
+function loadAudio(){
+  audio = new Audio('audio/vetrina-' + lang + '.mp3');
+  audio.preload = 'auto';
 }
 
-function refreshVoice(){ pick = selectVoice(); }
-
-if('speechSynthesis' in window){
-  refreshVoice();
-  speechSynthesis.onvoiceschanged = refreshVoice;
+function speakFallback(){
+  if(!('speechSynthesis' in window)) return;
+  try{
+    var u = new SpeechSynthesisUtterance(t('voice'));
+    u.lang = lang;
+    speechSynthesis.cancel();
+    speechSynthesis.speak(u);
+  }catch(e){}
 }
 
 function speak(){
-  if(!('speechSynthesis' in window)) return;
   try{
-    if(speechSynthesis.speaking || speechSynthesis.pending) speechSynthesis.cancel();
-    refreshVoice();
-    var u = new SpeechSynthesisUtterance(t('voice'));
-    if(pick) u.voice = pick;
-    u.lang = pick ? pick.lang : lang;
-    speechSynthesis.resume();
-    speechSynthesis.speak(u);
-  }catch(e){}
+    audio.pause();
+    audio.currentTime = 0;
+    var pr = audio.play();
+    if(pr && pr.catch) pr.catch(speakFallback);
+  }catch(e){ speakFallback(); }
 }
 
 function setLang(newLang){
@@ -223,7 +208,7 @@ function setLang(newLang){
   document.querySelectorAll('[data-t]').forEach(function(el){
     el.innerHTML = t(el.getAttribute('data-t'));
   });
-  refreshVoice();
+  loadAudio();
 }
 
 // Lingua: ?lang=xx, altrimenti quella del telefono, altrimenti inglese
