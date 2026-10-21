@@ -55,7 +55,7 @@ body::before{
   text-align:center;
   gap:clamp(14px, 2.6vh, 30px);
   padding:
-    calc(env(safe-area-inset-top) + 56px)
+    calc(env(safe-area-inset-top) + 24px)
     clamp(18px, 6vw, 40px)
     calc(env(safe-area-inset-bottom) + 24px);
 }
@@ -117,98 +117,11 @@ body::before{
   color:#ffd23f;
   margin-top:clamp(8px, 1.4vh, 14px);
 }
-
-/* divider */
-.divider{
-  width:clamp(40px, 12vw, 64px);
-  height:1px;
-  background:#ffd700;
-  flex:none;
-}
-
-/* messaggio nella lingua del cliente */
-.applies{
-  font-size:clamp(17px, 5vw, 24px);
-  color:#ffffff;
-  letter-spacing:0.5px;
-  line-height:1.6;
-}
-.applies strong{
-  color:#ffd23f;
-  font-weight:700;
-}
-
-/* ascolta */
-.listen{
-  background:transparent;
-  border:2px solid #ffd700;
-  color:#ffd700;
-  border-radius:50px;
-  padding:12px 26px;
-  font-size:clamp(14px, 3.8vw, 18px);
-  font-weight:700;
-  letter-spacing:1px;
-  cursor:pointer;
-  animation:pulse 2s infinite;
-}
-.listen.done{animation:none;opacity:0.8;}
-@keyframes pulse{
-  0%,100%{box-shadow:0 0 0 0 rgba(255,215,0,0.6)}
-  50%{box-shadow:0 0 0 12px rgba(255,215,0,0)}
-}
-
-/* lingue, come nelle guide */
-.lang-row{
-  position:fixed;
-  top:calc(env(safe-area-inset-top) + 10px);
-  left:0;right:0;
-  display:flex;justify-content:center;gap:6px;
-  z-index:2;
-}
-.lang-btn{
-  background:transparent;
-  border:1px solid rgba(255,215,0,0.5);
-  color:rgba(255,255,255,0.8);
-  border-radius:14px;
-  padding:5px 10px;
-  font-size:12px;font-weight:700;letter-spacing:1px;
-  cursor:pointer;
-}
-.lang-btn.active{background:#ffd700;color:#0a0a0a;border-color:#ffd700;}
-
-/* CTA */
-.cta{
-  width:100%;
-  max-width:520px;
-  padding:clamp(16px, 2.4vh, 22px) 20px;
-  background:linear-gradient(135deg,#ffb300,#ffe14d);
-  color:#0a0a0a;
-  border:none;
-  border-radius:50px;
-  font-size:clamp(13px, 3.6vw, 17px);
-  font-weight:900;
-  letter-spacing:3px;
-  text-transform:uppercase;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  box-shadow:0 6px 30px rgba(255,200,0,0.55);
-  flex:none;
-  margin-top:clamp(4px, 1vh, 12px);
-}
 </style>
 </head>
 <body>
 
 <div class="stars" id="stars"></div>
-
-<div class="lang-row" id="langRow">
-  <button class="lang-btn" data-lang="en">EN</button>
-  <button class="lang-btn" data-lang="it">IT</button>
-  <button class="lang-btn" data-lang="fr">FR</button>
-  <button class="lang-btn" data-lang="de">DE</button>
-  <button class="lang-btn" data-lang="es">ES</button>
-</div>
 
 <div class="screen">
 
@@ -220,13 +133,6 @@ body::before{
     <div class="activated" data-t="sub"></div>
   </div>
 
-  <div class="divider"></div>
-
-  <div class="applies" data-t="line"></div>
-
-  <button class="listen" id="btnListen" onclick="speak()">&#x1f50a; <span data-t="listen"></span></button>
-
-  <div class="cta" data-t="cta"></div>
 </div>
 
 <script>
@@ -234,24 +140,14 @@ var GAS = 'https://script.google.com/macros/s/AKfycbx0Qd3zb39OjjG4BhOjX3Ph7h85WI
 
 var I18N = {
   en:{headline:'Special offer', hero:'Buy 2<br>3rd free', sub:'in store now',
-      line:'Buy <strong>2 items</strong>,<br>get the <strong>3rd free</strong>',
-      cta:'Come inside', listen:'Tap to listen',
       voice:'Special offer at Biba Boutique. Buy two items and get the third one free. Come inside!'},
   it:{headline:'Offerta speciale', hero:'Compri 2<br>3° gratis', sub:'in negozio adesso',
-      line:'Compra <strong>2 articoli</strong>,<br>il <strong>3° è in regalo</strong>',
-      cta:'Entra', listen:'Tocca per ascoltare',
       voice:'Offerta speciale da Biba Boutique. Compra due articoli e il terzo è in regalo. Entra a trovarci!'},
   fr:{headline:'Offre spéciale', hero:'2 achetés<br>3e offert', sub:'en boutique maintenant',
-      line:'Achetez <strong>2 articles</strong>,<br>le <strong>3e est offert</strong>',
-      cta:'Entrez', listen:'Touchez pour écouter',
       voice:'Offre spéciale chez Biba Boutique. Achetez deux articles et le troisième est offert. Entrez nous voir !'},
   de:{headline:'Sonderangebot', hero:'Kauf 2<br>3. gratis', sub:'jetzt im Laden',
-      line:'Kaufen Sie <strong>2 Artikel</strong>,<br>der <strong>3. ist gratis</strong>',
-      cta:'Kommen Sie herein', listen:'Zum Anhören tippen',
       voice:'Sonderangebot bei Biba Boutique. Kaufen Sie zwei Artikel, und der dritte ist gratis. Kommen Sie herein!'},
   es:{headline:'Oferta especial', hero:'Compra 2<br>3º gratis', sub:'ya en tienda',
-      line:'Compra <strong>2 artículos</strong>,<br>el <strong>3º es gratis</strong>',
-      cta:'Entra', listen:'Toca para escuchar',
       voice:'Oferta especial en Biba Boutique. Compra dos artículos y el tercero es gratis. ¡Entra a vernos!'}
 };
 
@@ -296,28 +192,17 @@ function speak(){
     if(pick) u.voice = pick;
     u.lang = pick ? pick.lang : lang;
     speechSynthesis.speak(u);
-    document.getElementById('btnListen').classList.add('done');
   }catch(e){}
 }
 
 function setLang(newLang){
   lang = I18N[newLang] ? newLang : 'en';
   document.documentElement.lang = lang;
-  document.querySelectorAll('.lang-btn').forEach(function(b){
-    b.classList.toggle('active', b.dataset.lang === lang);
-  });
   document.querySelectorAll('[data-t]').forEach(function(el){
     el.innerHTML = t(el.getAttribute('data-t'));
   });
   refreshVoice();
 }
-
-document.querySelectorAll('.lang-btn').forEach(function(btn){
-  btn.addEventListener('click', function(){
-    setLang(btn.dataset.lang);
-    speak();
-  });
-});
 
 // Lingua: ?lang=xx, altrimenti quella del telefono, altrimenti inglese
 (function(){
@@ -330,8 +215,8 @@ document.querySelectorAll('.lang-btn').forEach(function(btn){
 // poi il primo tocco in un punto qualunque della pagina fa partire la voce.
 speak();
 var spokenByTouch = false;
-document.addEventListener('pointerdown', function(e){
-  if(spokenByTouch || e.target.closest('button')) return;
+document.addEventListener('pointerdown', function(){
+  if(spokenByTouch) return;
   spokenByTouch = true;
   speak();
 });
