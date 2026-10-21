@@ -24,8 +24,8 @@ body::before{
   content:'';
   position:fixed;inset:0;
   background:
-    radial-gradient(circle at 20% 25%, rgba(201,168,106,0.12) 0%, transparent 55%),
-    radial-gradient(circle at 80% 75%, rgba(201,168,106,0.08) 0%, transparent 55%);
+    radial-gradient(circle at 20% 25%, rgba(255,200,0,0.22) 0%, transparent 55%),
+    radial-gradient(circle at 80% 75%, rgba(255,170,0,0.16) 0%, transparent 55%);
   pointer-events:none;
   z-index:0;
 }
@@ -34,7 +34,7 @@ body::before{
 .stars{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0;}
 .star{
   position:absolute;width:2px;height:2px;border-radius:50%;
-  background:#c9a86a;opacity:0;animation:twinkle 3s infinite;
+  background:#ffd700;opacity:0;animation:twinkle 3s infinite;
 }
 @keyframes twinkle{
   0%,100%{opacity:0;transform:scale(0.5)}
@@ -64,12 +64,13 @@ body::before{
 .check{
   width:clamp(56px, 15vw, 78px);
   height:clamp(56px, 15vw, 78px);
-  background:rgba(201,168,106,0.10);
-  border:2px solid rgba(201,168,106,0.60);
+  background:rgba(255,215,0,0.15);
+  border:2px solid #ffd700;
+  box-shadow:0 0 18px rgba(255,215,0,0.5);
   border-radius:50%;
   display:flex;align-items:center;justify-content:center;
   font-size:clamp(26px, 7vw, 36px);
-  color:#c9a86a;
+  color:#ffd700;
   animation:popIn 0.5s cubic-bezier(0.175,0.885,0.32,1.275) both;
   flex:none;
 }
@@ -84,7 +85,7 @@ body::before{
   font-weight:700;
   letter-spacing:2px;
   text-transform:uppercase;
-  color:rgba(255,255,255,0.88);
+  color:#ffffff;
   margin-bottom:clamp(6px, 1.2vh, 12px);
 }
 
@@ -94,11 +95,17 @@ body::before{
   font-weight:900;
   line-height:0.98;
   text-transform:uppercase;
-  background:linear-gradient(135deg,#c9a86a 0%,#f0d78a 50%,#c9a86a 100%);
+  background:linear-gradient(135deg,#ffb300 0%,#fff176 50%,#ffb300 100%);
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
   background-clip:text;
   letter-spacing:-1px;
+  filter:drop-shadow(0 0 14px rgba(255,200,0,0.75));
+  animation:blink 1.2s step-end infinite;
+}
+@keyframes blink{
+  0%{opacity:1}
+  65%{opacity:0.15}
 }
 
 /* sottotitolo */
@@ -107,7 +114,7 @@ body::before{
   font-weight:700;
   letter-spacing:2px;
   text-transform:uppercase;
-  color:#c9a86a;
+  color:#ffd23f;
   margin-top:clamp(8px, 1.4vh, 14px);
 }
 
@@ -115,27 +122,27 @@ body::before{
 .divider{
   width:clamp(40px, 12vw, 64px);
   height:1px;
-  background:rgba(201,168,106,0.3);
+  background:#ffd700;
   flex:none;
 }
 
 /* messaggio nella lingua del cliente */
 .applies{
   font-size:clamp(17px, 5vw, 24px);
-  color:rgba(255,255,255,0.78);
+  color:#ffffff;
   letter-spacing:0.5px;
   line-height:1.6;
 }
 .applies strong{
-  color:#c9a86a;
+  color:#ffd23f;
   font-weight:700;
 }
 
 /* ascolta */
 .listen{
   background:transparent;
-  border:2px solid #c9a86a;
-  color:#c9a86a;
+  border:2px solid #ffd700;
+  color:#ffd700;
   border-radius:50px;
   padding:12px 26px;
   font-size:clamp(14px, 3.8vw, 18px);
@@ -146,8 +153,8 @@ body::before{
 }
 .listen.done{animation:none;opacity:0.8;}
 @keyframes pulse{
-  0%,100%{box-shadow:0 0 0 0 rgba(201,168,106,0.5)}
-  50%{box-shadow:0 0 0 12px rgba(201,168,106,0)}
+  0%,100%{box-shadow:0 0 0 0 rgba(255,215,0,0.6)}
+  50%{box-shadow:0 0 0 12px rgba(255,215,0,0)}
 }
 
 /* lingue, come nelle guide */
@@ -160,21 +167,21 @@ body::before{
 }
 .lang-btn{
   background:transparent;
-  border:1px solid rgba(201,168,106,0.35);
-  color:rgba(255,255,255,0.6);
+  border:1px solid rgba(255,215,0,0.5);
+  color:rgba(255,255,255,0.8);
   border-radius:14px;
   padding:5px 10px;
   font-size:12px;font-weight:700;letter-spacing:1px;
   cursor:pointer;
 }
-.lang-btn.active{background:rgba(201,168,106,0.18);color:#c9a86a;border-color:#c9a86a;}
+.lang-btn.active{background:#ffd700;color:#0a0a0a;border-color:#ffd700;}
 
 /* CTA */
 .cta{
   width:100%;
   max-width:520px;
   padding:clamp(16px, 2.4vh, 22px) 20px;
-  background:#c9a86a;
+  background:linear-gradient(135deg,#ffb300,#ffe14d);
   color:#0a0a0a;
   border:none;
   border-radius:50px;
@@ -185,7 +192,7 @@ body::before{
   display:flex;
   align-items:center;
   justify-content:center;
-  box-shadow:0 6px 30px rgba(201,168,106,0.3);
+  box-shadow:0 6px 30px rgba(255,200,0,0.55);
   flex:none;
   margin-top:clamp(4px, 1vh, 12px);
 }
