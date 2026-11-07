@@ -211,10 +211,10 @@ function setLang(newLang){
   loadAudio();
 }
 
-// Lingua: ?lang=xx, altrimenti quella del telefono, altrimenti inglese
+// Lingua: SEMPRE inglese (scelta di Michele 07/11/2026); ?lang=xx solo per prove
 (function(){
   var p = new URLSearchParams(location.search).get('lang');
-  var l = (p || navigator.language || 'en').slice(0,2).toLowerCase();
+  var l = (p || 'en').slice(0,2).toLowerCase();
   setLang(I18N[l] ? l : 'en');
 })();
 
